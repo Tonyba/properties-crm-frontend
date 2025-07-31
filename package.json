@@ -13,6 +13,7 @@
     "@loadable/component": "^5.16.7",
     "@tailwindcss/vite": "^4.1.11",
     "@tanstack/react-query": "^5.83.0",
+    "@tanstack/react-query-devtools": "^5.83.1",
     "@types/loadable__component": "^5.13.9",
     "axios": "^1.10.0",
     "datatables.net-dt": "^2.3.2",

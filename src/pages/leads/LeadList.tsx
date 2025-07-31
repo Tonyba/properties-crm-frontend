@@ -1,60 +1,26 @@
-import type { FilterItem } from "../../helpers/types";
+import type { InputItem } from "../../helpers/types";
 import TableFilters from "../../ui/table_filters/TableFilters"
 import DataTable from 'datatables.net-react';
 import DT from 'datatables.net-dt';
+import { leadFields } from "../../helpers/constants";
+import { ModuleContentWrapper } from "../../components/wrappers";
 
 DataTable.use(DT);
 
-const filters: FilterItem[] = [
-    {
-        key: 'first_name',
-        label: 'First Name',
-        type: 'text'
-    },
-    {
-        key: 'last_name',
-        label: 'Last Name',
-        type: 'text'
-    },
-    {
-        key: 'company',
-        label: 'Company',
-        type: 'text'
-    },
-    {
-        key: 'phone',
-        label: 'Phone',
-        type: 'text'
-    },
-    {
-        key: 'website',
-        label: 'Website',
-        type: 'text'
-    },
-    {
-        key: 'email',
-        label: 'Email',
-        type: 'text'
-    },
-    {
-        key: 'assigned_to',
-        label: 'Assigned To',
-        type: 'select'
-    },
-];
+
 
 const LeadList = () => {
 
-    const handleSearch = (filters: FilterItem[]) => {
+    const handleSearch = (filters: InputItem[]) => {
         console.log(filters)
     }
 
-    const dataCols = filters.map(filter => ({ data: filter.key }));
+    const dataCols = leadFields.map(filter => ({ data: filter.key }));
 
     return (
-        <div className="p-3">
+        <ModuleContentWrapper>
 
-            <TableFilters searchFn={handleSearch} filters={filters} />
+            <TableFilters searchFn={handleSearch} filters={leadFields} />
 
             <DataTable
                 options={{
@@ -66,14 +32,14 @@ const LeadList = () => {
                 columns={dataCols} >
                 <thead>
                     <tr>
-                        {filters.map(filter => (
-                            <th>{filter.label}</th>
+                        {leadFields.map(filter => (
+                            <th key={filter.label}>{filter.label}</th>
                         ))}
                     </tr>
                 </thead>
             </DataTable>
 
-        </div>
+        </ModuleContentWrapper>
     )
 }
 

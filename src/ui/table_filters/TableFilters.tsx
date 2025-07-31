@@ -1,6 +1,6 @@
 import { useState, type ChangeEvent } from "react";
 import { FilterInput } from "../../components/FilterInputs";
-import type { FilterItem } from "../../helpers/types";
+import type { InputItem } from "../../helpers/types";
 
 import Select from 'react-select';
 import AsyncSelect from 'react-select/async';
@@ -12,8 +12,8 @@ const options = [
 ]
 
 type props = {
-    filters: FilterItem[];
-    searchFn: (filters: FilterItem[]) => void
+    filters: InputItem[];
+    searchFn: (filters: InputItem[]) => void
 }
 
 function TableFilters({ filters, searchFn }: props) {
