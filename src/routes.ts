@@ -1,0 +1,92 @@
+import { createBrowserRouter, type RouteObject } from "react-router"
+
+import loadable from "@loadable/component";
+
+import App from "./App";
+
+
+
+import { appLoader } from "./loaders/appLoader";
+import type { QueryClient } from "@tanstack/react-query";
+
+export type ModuleHeaderPropsType = {
+    moduleSingle?: string;
+    createPath?: string;
+    importBtn?: boolean;
+    filter?: boolean;
+    isCreate?: boolean
+}
+
+export type RouterItem = RouteObject & {
+    label?: string;
+    index?: boolean;
+    children?: RouterItem[];
+    headerProps?: ModuleHeaderPropsType
+}
+
+type RouteItems = RouterItem[];
+
+const DashboardPage = loadable(() => import("./pages/dashboard/DashboardPage"));
+const PropertiesPage = loadable(() => import("./pages/properties/PropertiesPage"));
+const MarketingPage = loadable(() => import("./pages/leads/LeadRoot"));
+const LeadList = loadable(() => import("./pages/leads/LeadList"));
+const AddLead = loadable(() => import("./pages/leads/LeadAdd"));
+
+
+export const routesFn = (queryClient?: QueryClient) => {
+
+    const routerItems: RouteItems = [
+        {
+            path: '/',
+            Component: App,
+            children: [
+                {
+                    index: true,
+                    Component: DashboardPage,
+                    label: 'Dashboard',
+                },
+                {
+                    path: '/properties',
+                    label: 'Properties',
+                    Component: PropertiesPage
+                },
+                {
+                    path: '/marketing',
+                    label: 'Marketing',
+                    Component: MarketingPage,
+                    children: [
+                        {
+                            index: true,
+                            label: 'Leads',
+                            Component: LeadList,
+                            headerProps: {
+                                moduleSingle: 'Lead',
+                                importBtn: true,
+                                filter: true,
+                            }
+                        },
+                        {
+                            label: 'Add Lead',
+                            path: 'leads/add',
+                            Component: AddLead,
+                            headerProps: {
+                                showTopHeader: false,
+                                isCreate: true
+                            }
+                        }
+                    ],
+                }
+            ]
+        },
+    ];
+
+    if (queryClient) {
+        routerItems[0].loader = appLoader(queryClient)!;
+    }
+
+    const router = createBrowserRouter(routerItems);
+
+    return { router, routerItems };
+}
+
+
