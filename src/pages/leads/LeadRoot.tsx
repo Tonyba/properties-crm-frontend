@@ -27,8 +27,8 @@ const headerStyle = `${headerHeight}px`;
 
 function LeadRoot() {
     return (
-        <div className={`flex h-[calc(100vh-72px)]`}>
-            <div className="">
+        <div className={`flex min-h-[calc(100vh_-_72px)] h-[calc(100%_-_72px)]`}>
+            <div className="w-[180px]">
                 <ModuleSidebarMenu
                     basePath={basePath}
                     baseIcon={baseIcon}
@@ -38,8 +38,10 @@ function LeadRoot() {
                 />
             </div>
             <div className="flex-1">
+
                 <ModuleHeader createPath={`${basePath}/leads/add`} importBtn={true} filter={true} moduleSingle="placeholder" />
                 <Outlet />
+
             </div>
         </div>
     )

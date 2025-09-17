@@ -5,9 +5,10 @@ import loadable from "@loadable/component";
 import App from "./App";
 
 import { appLoader } from "./loaders/appLoader";
-import type { QueryClient } from "@tanstack/react-query";
+import { useQueryClient, type QueryClient } from "@tanstack/react-query";
 import type { RouterItem } from "./helpers/types";
 import { leadAddLoader } from "./loaders/leadLoader";
+import { use } from "react";
 
 
 type RouteItems = RouterItem[];
@@ -56,6 +57,16 @@ export const routesFn = (queryClient?: QueryClient) => {
                         {
                             label: 'Add Lead',
                             path: 'leads/add',
+                            Component: AddLead,
+                            loader: queryClient && leadAddLoader(queryClient),
+                            headerProps: {
+                                showTopHeader: false,
+                                isCreate: true
+                            },
+                        },
+                        {
+                            label: 'Edit Lead',
+                            path: 'leads/:leadId/edit',
                             Component: AddLead,
                             loader: queryClient && leadAddLoader(queryClient),
                             headerProps: {

@@ -3,7 +3,6 @@ import { FilterInput } from "../../components/FilterInputs";
 import type { InputItem } from "../../helpers/types";
 
 import Select from 'react-select';
-import AsyncSelect from 'react-select/async';
 
 const options = [
     { value: 'chocolate', label: 'Chocolate' },
@@ -31,10 +30,10 @@ function TableFilters({ filters, searchFn }: props) {
                     {
                         type != 'select' && <FilterInput
                             type={type}
-                            name={key}
+                            name={key + '-filter'}
                             placeholder={label}
-                            id={key}
-                            value={value}
+                            id={key + '-filter'}
+                            value={newFilter[i].value}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 let changed = [...newFilter];
                                 changed[i].value = e.target.value;

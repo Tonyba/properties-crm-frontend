@@ -16,6 +16,30 @@ export type Lead = {
     website?: string;
     description?: string;
     source?: string;
+    requested_property?: string;
+}
+
+export type ListLeadRequest = {
+    filters: Lead;
+    page?: number;
+    perPage: number;
+}
+
+export type SingleLeadResponse = {
+    lead: Lead;
+    ok: boolean;
+}
+
+export type GetLeadsResponse = {
+    data: Lead[],
+    draw: number,
+    recordsFiltered: number,
+    recordsTotal: number,
+}
+
+export type CreateLeadRequest = {
+    msg: string;
+    ok: boolean
 }
 
 export type ModuleHeaderPropsType = {
@@ -60,3 +84,8 @@ export type AddSelectsResponse = {
     lead_source: Term[],
     lead_status: Term[]
 }
+
+export type SearchPropertyByNameResponse = {
+    title: string;
+    id: number;
+}[];

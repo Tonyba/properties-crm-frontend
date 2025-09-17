@@ -1,21 +1,63 @@
-import type { InputItem } from "../../helpers/types";
+import type { InputItem, Lead } from "../../helpers/types";
 import TableFilters from "../../ui/table_filters/TableFilters"
-import DataTable from 'datatables.net-react';
-import DT from 'datatables.net-dt';
+
 import { leadFields } from "../../helpers/constants";
 import { ModuleContentWrapper } from "../../components/wrappers";
+import { useIsFetching, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 
-DataTable.use(DT);
 
+import DataTable from 'react-data-table-component';
+import { useLeadsList } from "../../hooks/useLeadsList";
 
 
 const LeadList = () => {
 
-    const handleSearch = (filters: InputItem[]) => {
-        console.log(filters)
+    const queryClient = useQueryClient();
+    const navigate = useNavigate();
+
+    const [firstTime, setFirstTime] = useState(true);
+
+    const [leadRequest, setLeadRequest] = useState({
+        perPage: 20,
+        page: 1,
+        filters: {} as Lead
+    });
+
+    const { data: leads } = useSuspenseQuery(useLeadsList(leadRequest, queryClient));
+    const fetching = useIsFetching({ queryKey: ['leads', 'list'] }) > 0
+
+    useEffect(() => {
+        const invalidate = async () => {
+            await queryClient.invalidateQueries({ queryKey: ['leads', 'list'] });
+        };
+        if (!firstTime) invalidate();
+    }, [leadRequest.perPage]);
+
+    const handleSearch = (filtersValues: InputItem[]) => {
+        console.log(filtersValues)
     }
 
-    const dataCols = leadFields.map(filter => ({ data: filter.key }));
+    const dataCols = leadFields.map(col => ({
+        name: col.label,
+        selector: (row: Lead) => row[col.key as keyof Lead] ?? ''
+    }))
+
+    const handlePaginationChange = (page: number) => {
+        setLeadRequest({ ...leadRequest, page });
+    }
+
+    const handleChangePerPage = async (newPerPage: number, page: number) => {
+
+        if (!firstTime) setLeadRequest({ ...leadRequest, perPage: newPerPage, page });
+        setFirstTime(false);
+
+    }
+
+    const handleRowClick = (row: Lead) => {
+        navigate(`./leads/${row.id}/edit`);
+    }
 
     return (
         <ModuleContentWrapper>
@@ -23,21 +65,20 @@ const LeadList = () => {
             <TableFilters searchFn={handleSearch} filters={leadFields} />
 
             <DataTable
-                options={{
-                    searching: false,
-                    ordering: false,
-                    lengthMenu: [10, 15, 20, 50, 100],
-                    pageLength: 20
-                }}
-                columns={dataCols} >
-                <thead>
-                    <tr>
-                        {leadFields.map(filter => (
-                            <th key={filter.label}>{filter.label}</th>
-                        ))}
-                    </tr>
-                </thead>
-            </DataTable>
+                columns={[...dataCols]}
+                progressPending={fetching}
+                responsive
+                highlightOnHover
+                pointerOnHover
+                pagination
+                paginationPerPage={leadRequest.perPage}
+                paginationTotalRows={leads.recordsFiltered}
+                paginationServer
+                data={leads.data}
+                onChangeRowsPerPage={handleChangePerPage}
+                onChangePage={handlePaginationChange}
+                onRowClicked={handleRowClick}
+            />
 
         </ModuleContentWrapper>
     )

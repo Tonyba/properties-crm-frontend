@@ -18,7 +18,7 @@ const items = [
     {
         label: 'Lead',
         icon: <LuIdCard size={iconSize} />,
-        path: '/lead/create',
+        path: '/marketing/leads/add',
     },
     {
         label: 'Contact',

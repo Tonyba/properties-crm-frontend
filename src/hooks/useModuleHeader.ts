@@ -1,6 +1,7 @@
 
 import { useLocation } from 'react-router'
-import { routesFn, type ModuleHeaderPropsType, type RouterItem } from '../routes';
+import { routesFn } from '../routes';
+import type { ModuleHeaderPropsType, RouterItem } from '../helpers/types';
 
 type useModuleHeaderType = [
     createPath?: string,

@@ -9,12 +9,12 @@ export const FilterButton = tw.button`
     items-center
     gap-2
     py-1
-    cursor-pointer
     px-2.5
     bg-white
     rounded-xs
     border-1
     border-gray-300
     hover:border-gray-500
+    cursor-pointer
     ${({ $className }: FilterButtonProps) => $className || ''}
 `;
