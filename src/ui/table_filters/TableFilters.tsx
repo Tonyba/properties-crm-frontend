@@ -1,14 +1,9 @@
 import { useState, type ChangeEvent } from "react";
 import { FilterInput } from "../../components/FilterInputs";
-import type { InputItem } from "../../helpers/types";
+import type { InputItem, SelectOption } from "../../helpers/types";
 
-import Select from 'react-select';
+import Select, { type MultiValue } from 'react-select';
 
-const options = [
-    { value: 'chocolate', label: 'Chocolate' },
-    { value: 'strawberry', label: 'Strawberry' },
-    { value: 'vanilla', label: 'Vanilla' }
-]
 
 type props = {
     filters: InputItem[];
@@ -20,12 +15,12 @@ function TableFilters({ filters, searchFn }: props) {
     const [newFilter, setNewFilter] = useState(filters);
 
     return (
-        <div className="flex [&>*]:w-full  gap-2.5">
+        <div className="flex [&>*]:w-full  gap-2.5" onKeyDown={(e) => e.key === 'Enter' && searchFn(newFilter)}>
             <div>
                 <button className="px-5 py-1.5 bg-blue-600 text-white rounded-xs text-xs font-medium" onClick={() => searchFn(newFilter)}>Search</button>
             </div>
 
-            {newFilter.map(({ key, value, type, label }, i) => (
+            {newFilter.map(({ key, value, type, label, options, isMultiSelect }, i) => (
                 <div key={key}>
                     {
                         type != 'select' && <FilterInput
@@ -47,10 +42,19 @@ function TableFilters({ filters, searchFn }: props) {
                             <Select
                                 className="w-full"
                                 options={options}
-                                value={options.find(option => option.value === value)}
+                                isMulti={isMultiSelect}
+                                placeholder={label ?? 'Select...'}
+                                value={options?.find(option => option.value === value)}
                                 onChange={(selectedOption) => {
+
                                     let changed = [...newFilter];
-                                    changed[i].value = selectedOption ? selectedOption.value : '';
+                                    if (Array.isArray(selectedOption)) {
+                                        changed[i].value = selectedOption.map((item: SelectOption) => item.value);
+                                    } else if (!Array.isArray(selectedOption) && selectedOption) {
+                                        const selected = selectedOption as SelectOption;
+                                        changed[i].value = selected.value;
+                                    }
+
                                     setNewFilter(changed);
                                 }}
                             />

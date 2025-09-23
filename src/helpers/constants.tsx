@@ -13,7 +13,7 @@ export const leadFields: InputItem[] = [
         key: 'first_name',
         label: 'First Name',
         type: 'text',
-        required: true
+        required: true,
     },
     {
         key: 'last_name',

@@ -3,8 +3,8 @@ import type { RouteObject } from "react-router";
 
 export type Lead = {
     id: number;
-    firstName: string;
-    lastName: string;
+    first_name: string;
+    last_name: string;
     email: string;
     assigned_to: string;
     secondary_emai?: string;
@@ -17,6 +17,11 @@ export type Lead = {
     description?: string;
     source?: string;
     requested_property?: string;
+}
+
+export type Agent = {
+    name: string;
+    id: number;
 }
 
 export type ListLeadRequest = {
@@ -47,7 +52,8 @@ export type ModuleHeaderPropsType = {
     createPath?: string;
     importBtn?: boolean;
     filter?: boolean;
-    isCreate?: boolean
+    isCreate?: boolean;
+    showCreateBtn?: boolean;
 }
 
 export type RouterItem = RouteObject & {
@@ -55,8 +61,10 @@ export type RouterItem = RouteObject & {
     index?: boolean;
     children?: RouterItem[];
     headerProps?: ModuleHeaderPropsType
+    createPath?: boolean
 }
 
+export type IsNever<T> = [T] extends [never] ? true : false;
 
 export type InputItem = {
     label: string;
@@ -64,6 +72,7 @@ export type InputItem = {
     type: 'text' | 'select' | 'number' | 'checkbox' | 'radio' | 'textarea' | 'tel' | 'email';
     value?: string | string[];
     required?: boolean;
+    isMultiSelect?: boolean;
     options?: SelectOption[]
 }
 

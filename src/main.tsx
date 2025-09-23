@@ -11,7 +11,7 @@ const root = document.getElementById('root');
 const queryClientInstance = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 10,
+      staleTime: 300000 // 5 minutes,
     },
   },
 })

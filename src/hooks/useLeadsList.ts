@@ -15,5 +15,5 @@ export const useLeadsList = (request: ListLeadRequest, queryClient: QueryClient)
         const data = await leads_list(request);
 
         return data.data;
-    }
+    },
 });

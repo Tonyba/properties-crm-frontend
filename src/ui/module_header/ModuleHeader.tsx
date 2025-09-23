@@ -11,7 +11,7 @@ import { useModuleHeader } from "../../hooks/useModuleHeader";
 export const ModuleHeader = () => {
 
     const [
-        createPath, filter, importBtn, moduleSingle
+        createPath, filter, importBtn, moduleSingle, showCreateBtn
     ] = useModuleHeader();
 
     return (
@@ -27,8 +27,7 @@ export const ModuleHeader = () => {
 
             </div>
             <div className="flex gap-2 text-[13px]">
-
-                {createPath &&
+                {(createPath && showCreateBtn) &&
                     <Link to={createPath} className="flex">
                         <FilterButton>
                             <LiaPlusSolid size={14} />

@@ -1,5 +1,5 @@
 
-import { useLocation } from 'react-router'
+import { useLocation, useParams, type Params } from 'react-router'
 import { routesFn } from '../routes';
 import type { ModuleHeaderPropsType, RouterItem } from '../helpers/types';
 
@@ -7,49 +7,59 @@ type useModuleHeaderType = [
     createPath?: string,
     filter?: boolean,
     importBtn?: boolean,
-    moduleSingle?: string
+    moduleSingle?: string,
+    showCreateBtn?: boolean
 ];
 
 export const useModuleHeader = (): useModuleHeaderType => {
     const location = useLocation();
-    const { createPath, filter, importBtn, moduleSingle } = findPathProps(location.pathname);
-    return [createPath, filter, importBtn, moduleSingle];
+    const params = useParams();
+    const { createPath, filter, importBtn, moduleSingle, showCreateBtn } = findPathProps(location.pathname, params);
+    return [createPath, filter, importBtn, moduleSingle, showCreateBtn];
 }
 
-function findPathProps(pathKey: string) {
+function findPathProps(pathKey: string, params: Readonly<Params<string>>) {
     const routes = routesFn().routerItems[0].children;
+
     const moduleKey = pathKey.split('/')[1];
     const moduleExt = pathKey.split('/')[2] || '';
 
     let props: ModuleHeaderPropsType = {};
 
+    const leadId = params.leadId;
+
     routes?.map((item) => {
+
         if (item.path?.includes(moduleKey)) {
             const children = item.children;
-            const route = findCreatePath(children || []);
+            const createRoute = findCreatePath(children || []);
+
 
             if (children?.length) {
                 children.some((child) => {
-                    const match = child as RouterItem;
+
+                    let match = child as RouterItem;
+                    if (leadId) match.path = match.path?.replace(':leadId', leadId);
+
                     if (!moduleExt && child.index) {
                         if (match.headerProps) {
                             props = match.headerProps;
-                            props.createPath = route?.path;
+                            props.createPath = createRoute?.path;
                         }
                         return true;
-                    } else if (moduleExt && child.path?.includes(pathKey)) {
+                    } else if (moduleExt && pathKey?.includes(child.path ?? 'nada')) {
                         if (match.headerProps) {
                             props = match.headerProps;
-                            props.createPath = route?.path;
+                            props.createPath = createRoute?.path;
                         };
                         return true;
                     }
-
                     return false;
                 });
             }
         }
     });
+
 
     return props;
 }

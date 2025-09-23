@@ -1,4 +1,4 @@
-import type { InputItem, Lead } from "../../helpers/types";
+import { type IsNever, type InputItem, type Lead } from "../../helpers/types";
 import TableFilters from "../../ui/table_filters/TableFilters"
 
 import { leadFields } from "../../helpers/constants";
@@ -10,12 +10,24 @@ import { useNavigate } from "react-router";
 
 import DataTable from 'react-data-table-component';
 import { useLeadsList } from "../../hooks/useLeadsList";
+import { useAgents } from "../../hooks/useAgents";
 
+const dataCols = leadFields.map(col => ({
+    name: col.label,
+    selector: (row: Lead) => row[col.key as keyof Lead] ?? ''
+}))
 
 const LeadList = () => {
-
     const queryClient = useQueryClient();
     const navigate = useNavigate();
+    const { data: agents } = useAgents(queryClient);
+
+    leadFields.map(field => {
+        if (field.key == 'assigned_to') {
+            field.options = agents?.map(agent => ({ label: agent.name, value: agent.id.toString() }));
+            field.isMultiSelect = true;
+        }
+    });
 
     const [firstTime, setFirstTime] = useState(true);
 
@@ -33,30 +45,30 @@ const LeadList = () => {
             await queryClient.invalidateQueries({ queryKey: ['leads', 'list'] });
         };
         if (!firstTime) invalidate();
-    }, [leadRequest.perPage]);
+    }, [leadRequest.perPage, JSON.stringify(leadRequest.filters)]);
 
     const handleSearch = (filtersValues: InputItem[]) => {
-        console.log(filtersValues)
-    }
 
-    const dataCols = leadFields.map(col => ({
-        name: col.label,
-        selector: (row: Lead) => row[col.key as keyof Lead] ?? ''
-    }))
+        let newFilters: any = {};
+
+        filtersValues.map(filter => {
+            if (filter.value) newFilters[filter.key] = filter.value
+        });
+
+        setLeadRequest({ ...leadRequest, page: 1, filters: newFilters });
+    }
 
     const handlePaginationChange = (page: number) => {
         setLeadRequest({ ...leadRequest, page });
     }
 
     const handleChangePerPage = async (newPerPage: number, page: number) => {
-
         if (!firstTime) setLeadRequest({ ...leadRequest, perPage: newPerPage, page });
         setFirstTime(false);
-
     }
 
     const handleRowClick = (row: Lead) => {
-        navigate(`./leads/${row.id}/edit`);
+        navigate(`./leads/${row.id}/details`);
     }
 
     return (

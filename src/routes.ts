@@ -5,10 +5,10 @@ import loadable from "@loadable/component";
 import App from "./App";
 
 import { appLoader } from "./loaders/appLoader";
-import { useQueryClient, type QueryClient } from "@tanstack/react-query";
+import { type QueryClient } from "@tanstack/react-query";
 import type { RouterItem } from "./helpers/types";
 import { leadAddLoader } from "./loaders/leadLoader";
-import { use } from "react";
+import { leadDetailsLoader } from "./loaders/leadDetailsLoader";
 
 
 type RouteItems = RouterItem[];
@@ -20,6 +20,16 @@ const PropertiesPage = loadable(() => import("./pages/properties/PropertiesPage"
 const MarketingPage = loadable(() => import("./pages/leads/LeadRoot"));
 const LeadList = loadable(() => import("./pages/leads/LeadList"));
 const AddLead = loadable(() => import("./pages/leads/LeadAdd"));
+
+const LeadDetails = loadable(() => import('./pages/leads/LeadDetails'));
+const LeadData = loadable(() => import('./pages/leads/LeadData'));
+const LeadUpdates = loadable(() => import('./pages/leads/LeadUpdates'));
+const LeadActivities = loadable(() => import('./pages/leads/LeadActivities'));
+const LeadEmails = loadable(() => import('./pages/leads/LeadEmails'));
+const LeadDocuments = loadable(() => import('./pages/leads/LeadDocuments'));
+const LeadCampaigns = loadable(() => import('./pages/leads/LeadCampaigns'));
+const LeadComments = loadable(() => import('./pages/leads/LeadComments'));
+const LeadSummary = loadable(() => import('./pages/leads/LeadSummary'));
 
 
 export const routesFn = (queryClient?: QueryClient) => {
@@ -52,6 +62,7 @@ export const routesFn = (queryClient?: QueryClient) => {
                                 moduleSingle: 'Lead',
                                 importBtn: true,
                                 filter: true,
+                                showCreateBtn: true
                             }
                         },
                         {
@@ -60,9 +71,61 @@ export const routesFn = (queryClient?: QueryClient) => {
                             Component: AddLead,
                             loader: queryClient && leadAddLoader(queryClient),
                             headerProps: {
-                                showTopHeader: false,
-                                isCreate: true
+                                isCreate: true,
+                                showCreateBtn: false,
+                            }
+                        },
+                        {
+                            label: 'Lead Details',
+                            path: 'leads/:leadId/details',
+                            loader: queryClient && leadDetailsLoader(queryClient),
+                            Component: LeadDetails,
+                            headerProps: {
+                                showCreateBtn: true,
+                                moduleSingle: 'Lead'
                             },
+                            children: [
+                                {
+                                    index: true,
+                                    label: 'Summary',
+                                    Component: LeadSummary,
+                                },
+                                {
+                                    label: 'Details',
+                                    path: 'data',
+                                    Component: LeadData
+                                },
+                                {
+                                    label: 'Updates',
+                                    path: 'updates',
+                                    Component: LeadUpdates
+                                },
+                                {
+                                    label: 'Activities',
+                                    path: 'activities',
+                                    Component: LeadActivities
+                                },
+                                {
+                                    label: 'Emails',
+                                    path: 'emails',
+                                    Component: LeadEmails
+                                },
+                                {
+                                    label: 'Documents',
+                                    path: 'documents',
+                                    Component: LeadDocuments
+                                },
+                                {
+                                    label: 'Campaigns',
+                                    path: 'campaigns',
+                                    Component: LeadCampaigns
+                                },
+                                {
+                                    label: 'Comments',
+                                    path: 'comments',
+                                    Component: LeadComments
+                                },
+                            ]
                         },
                         {
                             label: 'Edit Lead',
@@ -71,7 +134,6 @@ export const routesFn = (queryClient?: QueryClient) => {
                             loader: queryClient && leadAddLoader(queryClient),
                             headerProps: {
                                 showTopHeader: false,
-                                isCreate: true
                             },
                         }
                     ],
