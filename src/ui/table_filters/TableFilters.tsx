@@ -2,7 +2,7 @@ import { useState, type ChangeEvent } from "react";
 import { FilterInput } from "../../components/FilterInputs";
 import type { InputItem, SelectOption } from "../../helpers/types";
 
-import Select, { type MultiValue } from 'react-select';
+import Select from 'react-select';
 
 
 type props = {

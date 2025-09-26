@@ -1,12 +1,67 @@
 import { FaUser } from "react-icons/fa";
-import type { InputItem } from "./types";
+import type { InputItem, OffcanvasProps } from "./types";
+import { megabytesToBytes } from "./helpers";
 
 export const API_URL = 'http://properties-crm.local/wp-admin/admin-ajax.php';
 
 export const headerHeight = 72;
 export const iconSize = 20
 
+export const ValidExt = ['jpg', 'png', 'pdf', 'jpeg', 'webp'];
+export const validSizeInMB = megabytesToBytes(5);
+
 export const contactIcon = <FaUser size={iconSize} />
+
+export const DefaultOffcanvasOpts: OffcanvasProps = {
+    open: false,
+    title: '',
+    template: '',
+    customOpts: {
+        external: false
+    }
+}
+
+export const DocumentUploadFormFields: InputItem[] = [
+    {
+        key: 'uploaded_file',
+        type: 'upload'
+    },
+    {
+        key: 'external_url',
+        type: 'text',
+        label: 'File Url',
+        required: true
+    },
+    {
+        key: 'title',
+        label: 'Title',
+        type: 'text',
+        required: true
+    },
+    {
+        key: 'assigned_to',
+        label: 'Assigned to',
+        type: 'select',
+        required: true,
+        isClearable: false
+    },
+    {
+        key: 'note',
+        label: 'Note',
+        type: 'textarea'
+    },
+    {
+        key: 'download_type',
+        label: 'Download Type',
+        type: 'select',
+        isClearable: false
+    },
+    {
+        key: 'relation',
+        label: 'Relation',
+        type: 'hidden'
+    }
+];
 
 export const leadFields: InputItem[] = [
     {

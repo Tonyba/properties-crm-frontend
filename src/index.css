@@ -1,1 +1,33 @@
 @import 'tailwindcss';
+
+.offcanvas {
+    @apply fixed bottom-0 z-50 flex flex-col max-w-full bg-white outline-0 transition-transform duration-300 ease-in-out motion-reduce:transition-none
+}
+
+.offcanvas.show {
+    @apply transform-none
+}
+
+.top {
+    @apply top-0 right-0 left-0 h-[30vh] max-h-full border-b border-[#00000033] -translate-y-full
+}
+
+.right {
+    @apply top-0 right-0 w-[30vh] border-l border-solid border-[#00000033] translate-x-full
+}
+
+.bottom {
+    @apply right-0 left-0 h-[30vh] max-h-full border-t border-solid border-[#00000033] translate-y-full
+}
+
+.left {
+    @apply top-0 left-0 w-[30vh] border-l border-solid border-[#00000033] -translate-x-full
+}
+
+.backdrop {
+    @apply fixed left-0 top-0 bottom-0 right-0 bg-[#00000080] opacity-0 invisible transition-opacity duration-200 ease-in-out
+}
+
+.backdrop.show {
+    @apply visible opacity-100
+}

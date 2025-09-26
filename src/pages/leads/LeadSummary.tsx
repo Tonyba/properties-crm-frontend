@@ -1,21 +1,24 @@
 import { CiEdit } from "react-icons/ci";
 import { FaCheck } from "react-icons/fa6";
 import { FaTimes } from "react-icons/fa";
+import { FaExternalLinkAlt } from "react-icons/fa";
+import { FaFileExport } from "react-icons/fa";
 
 import { useState, type ChangeEvent } from "react";
 import { SingleBoxContainer, SingleBoxTitle } from "../../components/SingleDetailBox"
 import { leadFields } from "../../helpers/constants"
 import { useParams } from "react-router";
 import { Input } from "../../components/InputForm";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import type { Lead, SelectOption } from "../../helpers/types";
 
 import Select from 'react-select';
 import { formatSelectOpt } from "../../helpers/helpers";
 import { useAgents } from "../../hooks/useAgents";
 
-import { edit_lead } from "../../api/leads";
-import { SummaryBox } from "../../components/SummaryBox";
+import { SummaryBox } from "../../components/SummaryBoxComponents/SummaryBox";
+import { useLeadUpdate } from "../../hooks/useLeadUpdate";
+import { useOffcanvas, useOffcanvasMutation } from "../../hooks/useOffcanvas";
 
 const keyFields = leadFields.filter(item => item.required);
 
@@ -30,7 +33,8 @@ const LeadSummary = () => {
     const [leadData, setLeadData] = useState<Lead & { readonly: true }>(lead as Lead & { readonly: true });
     const [readOnlyFields, setReadOnlyFields] = useState(Object.keys(lead as Lead).map(key => ({ key, readonly: true, visible: false })));
 
-
+    const { data: offcanvasOpts } = useOffcanvas({ queryClient });
+    const { mutate: mutateOffcanvas } = useOffcanvasMutation({ queryClient });
 
 
     const handleEditBtn = (key: string) => {
@@ -56,21 +60,48 @@ const LeadSummary = () => {
         setReadOnlyFields(readOnlyFields.map(val => ({ ...val, readonly: true, visible: false })));
     }
 
-    const { status, error, mutate } = useMutation({
-        mutationFn: edit_lead,
-        onSuccess: async () => {
-            await queryClient.invalidateQueries({ queryKey: ['leads', 'list'] });
-            await queryClient.invalidateQueries({ queryKey: [`lead/${leadId}`] });
+    const { mutate } = useLeadUpdate(leadId ?? '', lead as Lead, queryClient);
+
+    const docsOpts = [
+        {
+            label: 'From File Url',
+            icon: <FaExternalLinkAlt />,
+            optFn: () => {
+                mutateOffcanvas({
+                    queryClient,
+                    offCanvasOpts: {
+                        ...offcanvasOpts,
+                        title: 'New Document',
+                        template: 'document',
+                        size: 'xl',
+                        customOpts: {
+                            ...offcanvasOpts?.customOpts,
+                            external: true
+                        }
+                    }
+                });
+            },
         },
-        onMutate: async (newLead: Lead) => {
-            await queryClient.cancelQueries({ queryKey: [`lead/${leadId}`] });
-            queryClient.setQueryData([`lead/${leadId}`], () => (newLead));
-            return lead;
-        },
-        onError: () => {
-            console.log('some error')
+        {
+            label: 'File Upload',
+            icon: <FaFileExport />,
+            optFn: () => {
+                mutateOffcanvas({
+                    queryClient,
+                    offCanvasOpts: {
+                        ...offcanvasOpts,
+                        title: 'Upload Document',
+                        template: 'document',
+                        size: 'xl',
+                        customOpts: {
+                            ...offcanvasOpts?.customOpts,
+                            external: false
+                        }
+                    }
+                });
+            }
         }
-    });
+    ];
 
     return (
         <div className='flex gap-5'>
@@ -78,7 +109,7 @@ const LeadSummary = () => {
                 <SingleBoxContainer>
                     <SingleBoxTitle>Key Fields</SingleBoxTitle>
                     <div className="space-y-2">
-                        {keyFields.map(({ key, type, label, required, options }) => (
+                        {keyFields.map(({ key, type, label, required }) => (
                             <div className={`flex justify-between relative group ${type == 'textarea' ? 'col-span-2' : ''}`} key={key}>
                                 <label className="text-sm" htmlFor={key}>{label}</label>
 
@@ -135,21 +166,32 @@ const LeadSummary = () => {
                 <SummaryBox title="Documents" actions={[
                     {
                         action: 'Documents',
-                        isWithSelect: true
+                        isWithSelect: true,
+                        options: docsOpts
                     }
                 ]} />
             </div>
             <div className="w-2/3 space-y-5">
                 <SummaryBox title="Activities" noFoundMessage="No Pending Activities" actions={[
                     {
-                        action: 'Task'
+                        action: 'Task',
+                        action_fn: () => {
+                            mutateOffcanvas({
+                                queryClient,
+                                offCanvasOpts: { ...offcanvasOpts, title: 'Quick Create Task', template: 'task', size: 'xl' }
+                            });
+                        }
                     },
                     {
-                        action: 'Event'
+                        action: 'Event',
+                        action_fn: () => {
+                            mutateOffcanvas({
+                                queryClient,
+                                offCanvasOpts: { ...offcanvasOpts, title: 'Quick Create Event', template: 'event', size: 'xl' }
+                            });
+                        }
                     }
                 ]} />
-
-
                 <SummaryBox
                     title="Comments"
                     noFoundMessage="No Comments"

@@ -2,7 +2,7 @@ import { Outlet } from "react-router"
 import { ModuleSidebarMenu } from "../../ui/module_sidebar_menu/ModuleSidebarMenu"
 import { LuIdCard } from "react-icons/lu";
 import { FaUsersViewfinder } from "react-icons/fa6";
-import { contactIcon, headerHeight } from "../../helpers/constants";
+import { contactIcon } from "../../helpers/constants";
 import { ModuleHeader } from "../../ui/module_header/ModuleHeader";
 
 const title = "Marketing";
@@ -23,8 +23,6 @@ const items = [
     }
 ];
 
-const headerStyle = `${headerHeight}px`;
-
 function LeadRoot() {
     return (
         <div className={`flex min-h-[calc(100vh_-_72px)] h-[calc(100%_-_72px)]`}>
@@ -39,7 +37,7 @@ function LeadRoot() {
             </div>
             <div className="flex-1">
 
-                <ModuleHeader createPath={`${basePath}/leads/add`} importBtn={true} filter={true} moduleSingle="placeholder" />
+                <ModuleHeader />
                 <Outlet />
 
             </div>

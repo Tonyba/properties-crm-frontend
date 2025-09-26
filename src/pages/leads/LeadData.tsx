@@ -1,9 +1,8 @@
-import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { IoChevronDown } from "react-icons/io5";
 import { useParams } from "react-router";
 import type { AddSelectsResponse, Lead, SelectOption } from "../../helpers/types";
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
-import { edit_lead } from "../../api/leads";
 import { fullLeadFields } from "../../helpers/constants";
 import { Input, TextArea } from "../../components/InputForm";
 import { searchPropertyById, searchPropertyByName } from "../../hooks/searchPropertyByName";
@@ -15,6 +14,7 @@ import { selectsLeadQuery } from "../../loaders/leadLoader";
 import { formatData } from "../../helpers/helpers";
 import { FaCheck, FaTimes } from "react-icons/fa";
 import { CiEdit } from "react-icons/ci";
+import { useLeadUpdate } from "../../hooks/useLeadUpdate";
 
 function LeadData() {
 
@@ -83,21 +83,7 @@ function LeadData() {
     );
 
 
-    const { status, error, mutate } = useMutation({
-        mutationFn: edit_lead,
-        onSuccess: async () => {
-            await queryClient.invalidateQueries({ queryKey: ['leads', 'list'] });
-            await queryClient.invalidateQueries({ queryKey: [`lead/${leadId}`] });
-        },
-        onMutate: async (newLead: Lead) => {
-            await queryClient.cancelQueries({ queryKey: [`lead/${leadId}`] });
-            queryClient.setQueryData([`lead/${leadId}`], () => (newLead));
-            return lead;
-        },
-        onError: () => {
-            console.log('some error')
-        }
-    });
+    const { mutate } = useLeadUpdate(leadId ?? '', lead as Lead, queryClient);
 
 
     useEffect(() => {
@@ -134,6 +120,7 @@ function LeadData() {
                                 placeholder={label}
                                 id={key}
                                 value={leadData?.[key as keyof Lead] ?? ""}
+                                readOnly={readOnlyFields.length ? readOnlyFields.find(field => field.key == key)?.readonly : true}
                                 className='w-1/2'
                                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                     const currentVal = e.target.value;

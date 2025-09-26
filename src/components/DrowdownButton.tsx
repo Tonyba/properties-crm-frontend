@@ -4,6 +4,11 @@ interface DropdownButtonProps {
     $className?: string;
 }
 
+interface DrowpdownContentProps extends DropdownButtonProps {
+    $withAnimation?: boolean,
+    $open?: boolean
+}
+
 export const DropdownButton = tw.div`
     inline-flex
     items-center
@@ -31,5 +36,9 @@ export const DrowpdownContent = tw.div`
     text-sm
     border-gray-300
     border-1
-    ${({ $className }: DropdownButtonProps) => $className || ''}
+    transition-[opacity,transform,visibility]
+    duration-150
+    ease-in-out
+    ${({ $className }: DrowpdownContentProps) => $className || ''}
+    ${({ $withAnimation, $open }: DrowpdownContentProps) => ($withAnimation && !$open) ? 'opacity-0 invisible -translate-y-[5%]' : 'translate-y-0 opacity-100 visible'}
 `;

@@ -38,9 +38,9 @@ export default function LeadAdd() {
 
     const [properties, setProperties] = useState<SelectOption[]>([]);
     const selectData = data;
-    const { status, error, mutate } = useMutation({
+    const { status, mutate } = useMutation({
         mutationFn: isEditing ? edit_lead : create_lead,
-        onSuccess: async (newLead) => {
+        onSuccess: async () => {
             await queryClient.invalidateQueries({ queryKey: ['leads', 'list'] });
             navigate('/marketing');
         }

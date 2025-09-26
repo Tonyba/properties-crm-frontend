@@ -21,6 +21,7 @@ export default function LeadDetails() {
     const params = useParams();
     const queryClient = useQueryClient();
 
+
     const { data: lead } = useSuspenseQuery(useSingleLead(params.leadId ?? '', true, queryClient));
     const singleLead = lead as Lead;
 
@@ -28,6 +29,8 @@ export default function LeadDetails() {
     const [open, handleOpen] = useMenu(dropDownBtnRef);
 
     const menu = LeadOptions(singleLead.id);
+
+
 
     return (
         <ModuleContentWrapper>

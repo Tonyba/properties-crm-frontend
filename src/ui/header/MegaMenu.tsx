@@ -10,7 +10,7 @@ type propType = {
 export default function MegaMenu({ ref }: propType) {
 
     return (
-        <div ref={ref} className="absolute top-full left-0  shadow-xl bg-white">
+        <div ref={ref} className="absolute top-full left-0 z-10 shadow-xl bg-white">
             <div className="flex">
                 {megaMenuItems.map(function (item) {
                     return <div key={item.path + 'mega'} className="flex first:border-r-0 last:border-l-0 flex-col border-1 border-gray-300" >

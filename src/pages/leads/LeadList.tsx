@@ -1,4 +1,4 @@
-import { type IsNever, type InputItem, type Lead } from "../../helpers/types";
+import { type InputItem, type Lead } from "../../helpers/types";
 import TableFilters from "../../ui/table_filters/TableFilters"
 
 import { leadFields } from "../../helpers/constants";

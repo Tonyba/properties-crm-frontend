@@ -1,5 +1,82 @@
 import type { RouteObject } from "react-router";
 
+export type Update = {
+    id: number;
+    date: string;
+    new_data?: string;
+    old_data?: string;
+    affected?: string;
+    user: string;
+    action: 'Edited' | 'Created' | 'Contact	Converted to Contact' | 'Trashed' | 'Linked';
+}
+
+export type Task = {
+    assigned_to: string;
+    relation?: number;
+    contact?: number;
+    from: string;
+    to: string;
+    description?: string;
+}
+
+export type Event = {
+    title: string;
+    from: string;
+    to: string;
+    status: string;
+    assigned_to: string;
+    priority?: string;
+    contact?: string;
+    relation?: number,
+    description?: string;
+}
+
+export type BoxData<T> = {
+    data?: T[]
+}
+
+export type Document = {
+    id: number;
+    title: string;
+    download_type: string;
+    external_url?: string;
+    assigned_to: string;
+    relation?: number;
+    note?: string;
+    file?: string;
+    ext?: string
+    filename?: string
+    file_id: number;
+}
+
+export type OffcanvasProps = {
+    open?: boolean,
+    title?: string,
+    template?: string,
+    size?: 'sm' | 'xl',
+    customOpts?: OffcanvasCustomOpts
+}
+
+export type OffcanvasCustomOpts = {
+    external: boolean
+}
+
+export type GenericResponse = {
+    ok: boolean;
+    msg?: string;
+}
+
+export type DocumentCreationResponse = {
+    file: string
+} & GenericResponse;
+
+export type GetUpdateResponseType = {
+    data?: Update[]
+} & GenericResponse;
+
+export type TaxonomiesArr = {
+    [key: string]: SelectOption[]
+};
 
 export type Lead = {
     id: number;
@@ -67,13 +144,16 @@ export type RouterItem = RouteObject & {
 export type IsNever<T> = [T] extends [never] ? true : false;
 
 export type InputItem = {
-    label: string;
+    label?: string;
     key: string;
-    type: 'text' | 'select' | 'number' | 'checkbox' | 'radio' | 'textarea' | 'tel' | 'email';
+    type: 'text' | 'select' | 'number' | 'checkbox' | 'radio' | 'textarea' | 'tel' | 'email' | 'upload' | 'hidden';
     value?: string | string[];
     required?: boolean;
     isMultiSelect?: boolean;
-    options?: SelectOption[]
+    options?: SelectOption[];
+    valid_ext?: string[];
+    placeholder?: string;
+    isClearable?: boolean;
 }
 
 export type SelectOption = {
