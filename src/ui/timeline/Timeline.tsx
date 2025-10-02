@@ -64,7 +64,7 @@ const Pillar = tw.div`
 
 const EventCard = ({ action, date, user, oldData, newData, affected }: EventCardProps) => {
     return <div className="transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-2xl flex flex-col gap-y-2 border shadow-md rounded-xl p-4" >
-        <div className="text-blue-800 font-bold text-lg border-b">{user} {action} {capitalizeFirstLetter(affected ?? '')}</div>
+        <div className="text-blue-800 font-bold text-lg border-b">{user} {action} {capitalizeFirstLetter(affected ?? 'Task')}</div>
         <div className="text-sm text-gray-700">{date}</div>
         {
             (oldData && newData)

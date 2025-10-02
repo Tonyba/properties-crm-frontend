@@ -6,7 +6,6 @@ import Select from 'react-select';
 import { useAgents } from "../../hooks/useAgents";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { SelectOption, Document, Lead } from "../../helpers/types";
-import { get_document_taxonomies_terms } from "../../api/documents";
 import { useParams } from "react-router";
 import { useDropzone } from 'react-dropzone'
 import { bytesToMegabytes, checkValidFiles, megabytesToBytes, removeFileExtFromFilename } from "../../helpers/helpers";
@@ -14,6 +13,8 @@ import { SaveBottomBar } from "../SaveBottomBar";
 import { useDocMutation } from "../../hooks/useDocMutation";
 import { useSingleLead } from "../../hooks/useSingleLead";
 import { useOffcanvas, useOffcanvasMutation } from "../../hooks/useOffcanvas";
+import { QuickForm } from "../QuickForm";
+import { useTaxonomies } from "../../hooks/useTaxonomies";
 
 const defaultDocument = {} as Document;
 
@@ -31,13 +32,7 @@ const QuickDocument = () => {
     const [fields, setFields] = useState(DocumentUploadFormFields);
     const [document, setDocument] = useState<Document>({ ...defaultDocument, relation: parseInt(params.leadId!), assigned_to: lead.assigned_to });
     const { data: agents } = useAgents(queryClient);
-    const { data: doc_taxonomies } = useQuery({
-        queryKey: ['document_taxonomies'],
-        queryFn: async () => {
-            const response = await get_document_taxonomies_terms();
-            return response.data;
-        }
-    });
+    const { data: doc_taxonomies } = useTaxonomies('document');
 
 
     const [files, setFiles] = useState<File[]>([]);
@@ -126,7 +121,7 @@ const QuickDocument = () => {
 
     return (
         <>
-            <form className="grid grid-cols-2 gap-y-5 gap-x-24">
+            <QuickForm className="grid grid-cols-2 gap-y-5 gap-x-24">
                 {fields.map(({ key, type, label, required, options, placeholder, isClearable }) => (
                     <div className={`flex justify-between ${(type == 'textarea' || type == 'upload' || key == 'title') ? 'col-span-2' : ''}`} key={key}>
                         {(type != 'hidden' && type != 'upload') && <label className="text-sm" htmlFor={key}> {label} {required && <sup className="text-red-500 text-base translate-y-1.5 ml-1 inline-block">*</sup>}</label>}
@@ -193,7 +188,7 @@ const QuickDocument = () => {
                 ))}
 
 
-            </form >
+            </QuickForm >
             <SaveBottomBar isLoading={status == 'pending'} saveString="Create" onSubmit={handleSave} onCancel={handleCancel} isFullWidth={true} />
         </>
 

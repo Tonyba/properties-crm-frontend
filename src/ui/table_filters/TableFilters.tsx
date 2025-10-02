@@ -23,7 +23,21 @@ function TableFilters({ filters, searchFn }: props) {
             {newFilter.map(({ key, value, type, label, options, isMultiSelect }, i) => (
                 <div key={key}>
                     {
-                        type != 'select' && <FilterInput
+                        type == 'datetimepicker' && <FilterInput
+                            type="date"
+                            name={key + '-filter'}
+                            placeholder={label}
+                            id={key + '-filter'}
+                            value={newFilter[i].value}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                let changed = [...newFilter];
+                                changed[i].value = e.target.value;
+                                setNewFilter(changed);
+                            }}
+                        />
+                    }
+                    {
+                        (type != 'select' && type != 'datetimepicker') && <FilterInput
                             type={type}
                             name={key + '-filter'}
                             placeholder={label}

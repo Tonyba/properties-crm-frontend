@@ -21,14 +21,12 @@ const LeadList = () => {
     const queryClient = useQueryClient();
     const navigate = useNavigate();
     const { data: agents } = useAgents(queryClient);
-
     leadFields.map(field => {
         if (field.key == 'assigned_to') {
             field.options = agents?.map(agent => ({ label: agent.name, value: agent.id.toString() }));
             field.isMultiSelect = true;
         }
     });
-
     const [firstTime, setFirstTime] = useState(true);
 
     const [leadRequest, setLeadRequest] = useState({

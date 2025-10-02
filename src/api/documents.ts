@@ -1,13 +1,12 @@
 import axios from "axios";
 import { API_URL } from "../helpers/constants";
-import type { Document, DocumentCreationResponse, TaxonomiesArr } from "../helpers/types";
+import type { Document, DocumentCreationResponse } from "../helpers/types";
 
 type CreateDocumentPropsType = {
     doc: Document,
     file?: File[]
 }
 
-export const get_document_taxonomies_terms = () => axios.post<TaxonomiesArr>(`${API_URL}?action=document_taxonomies`);
 export const create_document = ({ doc, file }: CreateDocumentPropsType) => {
     const formData = new FormData();
 

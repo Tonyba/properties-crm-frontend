@@ -2,8 +2,9 @@ import tw from "tailwind-styled-components"
 import { SummaryDocuments } from "./SummaryDocuments";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
-import { useRelatedDocs } from "../../hooks/useDocs";
-import type { Document } from "../../helpers/types";
+import { useRelated } from "../../hooks/useRelated";
+import type { Activities, Document, Task } from "../../helpers/types";
+import { SummaryActivities } from "./SummaryActivities";
 
 type SummaryBoxDataProps = {
     noFoundMessage?: string,
@@ -15,7 +16,7 @@ const SummaryBoxDataContainer = tw.div``;
 export const SummaryBoxData = ({ noFoundMessage, boxKey }: SummaryBoxDataProps) => {
 
     const params = useParams();
-    const { data } = useQuery(useRelatedDocs(params.id || params.leadId || '', boxKey));
+    const { data } = useQuery(useRelated(params.id || params.leadId || '', boxKey));
 
     const List = () => {
 
@@ -24,6 +25,10 @@ export const SummaryBoxData = ({ noFoundMessage, boxKey }: SummaryBoxDataProps) 
         switch (boxKey) {
             case 'Documents':
                 render = <SummaryDocuments data={data as Document[]} />
+                break;
+
+            case 'Activities':
+                render = <SummaryActivities data={data as Activities[]} />
                 break;
 
             default:

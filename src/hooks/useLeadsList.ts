@@ -6,11 +6,11 @@ const getFromCache = (key: string, queryClient: QueryClient) => {
     return queryClient.getQueryData(['leads', 'list', key]);
 };
 
-export const useLeadsList = (request: ListLeadRequest, queryClient: QueryClient) => queryOptions({
+export const useLeadsList = <T>(request: ListLeadRequest<T>, queryClient: QueryClient) => queryOptions({
     queryKey: ['leads', 'list', request.page ?? 1],
-    queryFn: async (): Promise<GetLeadsResponse> => {
+    queryFn: async (): Promise<GetLeadsResponse<T>> => {
         const cache = getFromCache((request.page ?? 1).toString(), queryClient);
-        if (cache) return cache as GetLeadsResponse;
+        if (cache) return cache as GetLeadsResponse<T>;
 
         const data = await leads_list(request);
 

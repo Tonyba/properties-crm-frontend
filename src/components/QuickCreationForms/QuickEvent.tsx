@@ -1,6 +1,154 @@
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { SaveBottomBar } from "../SaveBottomBar";
+import { useParams } from "react-router";
+import { useEffect, useState, type ChangeEvent } from "react";
+import { useAgents } from "../../hooks/useAgents";
+import moment from "moment";
+import type { Lead, SelectOption, Event } from "../../helpers/types";
+import { useSingleLead } from "../../hooks/useSingleLead";
+import { useTaxonomies } from "../../hooks/useTaxonomies";
+import { useOffcanvas, useOffcanvasMutation } from "../../hooks/useOffcanvas";
+import { useEventMutation } from "../../hooks/useEventMutation";
+import { DateFormat, EventFormFields } from "../../helpers/constants";
+import { QuickForm } from "../QuickForm";
+import { Input, TextArea } from "../InputForm";
+import Select from 'react-select';
+
+const quickFields = EventFormFields.filter(field => field.quickField);
+
 
 export const QuickEvent = () => {
+    const queryClient = useQueryClient();
+    const { leadId } = useParams();
+
+    const [fields, setFields] = useState(quickFields);
+
+    const { data: agents } = useAgents(queryClient);
+
+
+    const [event, setEvent] = useState<Event>({
+        from: moment().format(),
+        to: moment().format(),
+        relation: parseInt(leadId!)
+    } as Event);
+
+    const { data } = useQuery(useSingleLead(leadId!, false, queryClient));
+    const lead = data as Lead;
+
+    const { data: taxonomies } = useTaxonomies('event');
+
+    const { data: offcanvasOpts } = useOffcanvas({ queryClient });
+    const { mutate: mutateOffcanvas } = useOffcanvasMutation({ queryClient });
+
+    const { mutate, status } = useEventMutation();
+
+    const handleCancel = () => {
+        mutateOffcanvas({ queryClient, offCanvasOpts: { ...offcanvasOpts, open: false } })
+    }
+
+
+    const handleSave = () => {
+        const dataToSave = { ...event };
+        dataToSave.from = moment(event.from).format(DateFormat);
+        dataToSave.to = moment(event.to).format(DateFormat);
+        mutate(dataToSave);
+    }
+
+    useEffect(() => {
+        let newFields = [...fields];
+        const assigned_index = newFields.findIndex(field => field.key == 'assigned_to');
+
+        if (assigned_index != -1) {
+            newFields[assigned_index].options = agents?.map((agent) => ({ label: agent.name, value: agent.id.toString() }));
+        }
+
+
+        if (taxonomies) {
+            const taxs = Object.keys(taxonomies);
+            console.log(newFields)
+            taxs.map(tax => {
+                const foundIndex = newFields.findIndex(field => field.key == tax);
+                if (newFields[foundIndex]) newFields[foundIndex].options = taxonomies[tax];
+            })
+        }
+
+        setFields(newFields);
+        setEvent({ ...event, assigned_to: lead.assigned_to });
+
+        return () => { }
+    }, [taxonomies]);
+
     return (
-        <div>QuickEvent</div>
+        <>
+            <QuickForm >
+                {fields.map(({ key, type, label, required, options, placeholder, isClearable }) => (
+                    <div className={`flex justify-between ${(type == 'textarea' || type == 'upload' || key == 'title') ? 'col-span-2' : ''}`} key={key}>
+                        <label className="text-sm" htmlFor={key}> {label} {required && <sup className="text-red-500 text-base translate-y-1.5 ml-1 inline-block">*</sup>}</label>
+                        {
+                            type == 'datetimepicker' && <Input
+                                name={key} id={key}
+                                placeholder={placeholder ?? label}
+                                aria-label={label}
+                                className='w-1/2'
+                                value={event?.[key as keyof Event]}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    const currentVal = e.target.value;
+
+                                    let newVal = { ...event };
+                                    (newVal as any)[key] = currentVal;
+                                    setEvent(newVal);
+                                }}
+                                type="datetime-local" />
+
+                        }
+                        {
+                            (type != 'select' && type != 'textarea' && type != 'datetimepicker') && <Input
+                                type={type}
+                                name={key}
+                                placeholder={label}
+                                id={key}
+                                value={event?.[key as keyof Event] ?? ""}
+                                className={key == 'title' ? 'w-[77%]' : 'w-1/2'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    const currentVal = e.target.value;
+                                    let newVal = { ...event };
+                                    (newVal as any)[key] = currentVal;
+                                    setEvent(newVal);
+                                }}
+                            />
+                        }
+                        {
+                            type == 'select' && (
+                                <Select
+                                    className="w-1/2"
+                                    isClearable={isClearable}
+                                    isSearchable={false}
+                                    options={options ?? []}
+                                    placeholder={placeholder ?? 'Select...'}
+                                    value={options?.find(opt => opt.value == event[key as keyof Event])}
+                                    onChange={(selectedOption) => {
+                                        let newVal = { ...event };
+                                        (newVal as any)[key] = (selectedOption as SelectOption)?.value;
+                                        setEvent(newVal);
+                                    }}
+                                />
+                            )
+                        }
+
+                        {
+                            type == 'textarea' && <TextArea key={key} name={key} id={key} value={document[key as keyof Document]} className="w-[77%]" onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                const currentVal = e.target.value;
+                                let newVal = { ...event };
+                                (newVal as any)[key] = currentVal;
+                                setEvent(newVal);
+                            }}></TextArea>
+                        }
+
+                    </div>
+                ))}
+            </QuickForm>
+            <SaveBottomBar isLoading={status == 'pending'} saveString="Create" onSubmit={handleSave} onCancel={handleCancel} isFullWidth={true} />
+        </>
+
     )
 }

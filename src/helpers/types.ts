@@ -10,6 +10,10 @@ export type Update = {
     action: 'Edited' | 'Created' | 'Contact	Converted to Contact' | 'Trashed' | 'Linked';
 }
 
+export type WithDataId = {
+    data: number;
+}
+
 export type Task = {
     assigned_to: string;
     relation?: number;
@@ -17,18 +21,24 @@ export type Task = {
     from: string;
     to: string;
     description?: string;
+    event_status: string;
+    priority?: string;
+    title: string;
+    id: number
 }
 
 export type Event = {
+    id: number;
     title: string;
     from: string;
     to: string;
-    status: string;
+    event_status: string;
     assigned_to: string;
     priority?: string;
     contact?: string;
     relation?: number,
     description?: string;
+    event_type: string
 }
 
 export type BoxData<T> = {
@@ -59,6 +69,14 @@ export type OffcanvasProps = {
 
 export type OffcanvasCustomOpts = {
     external: boolean
+}
+
+export type Activities = {
+    post_type: 'task' | 'event'
+    date: string;
+    title: string;
+    id: number;
+    status: string;
 }
 
 export type GenericResponse = {
@@ -101,8 +119,8 @@ export type Agent = {
     id: number;
 }
 
-export type ListLeadRequest = {
-    filters: Lead;
+export type ListLeadRequest<T> = {
+    filters: T;
     page?: number;
     perPage: number;
 }
@@ -112,8 +130,8 @@ export type SingleLeadResponse = {
     ok: boolean;
 }
 
-export type GetLeadsResponse = {
-    data: Lead[],
+export type GetLeadsResponse<T> = {
+    data: T[],
     draw: number,
     recordsFiltered: number,
     recordsTotal: number,
@@ -146,7 +164,7 @@ export type IsNever<T> = [T] extends [never] ? true : false;
 export type InputItem = {
     label?: string;
     key: string;
-    type: 'text' | 'select' | 'number' | 'checkbox' | 'radio' | 'textarea' | 'tel' | 'email' | 'upload' | 'hidden';
+    type: 'text' | 'datetimepicker' | 'select' | 'number' | 'checkbox' | 'radio' | 'textarea' | 'tel' | 'email' | 'upload' | 'hidden';
     value?: string | string[];
     required?: boolean;
     isMultiSelect?: boolean;
@@ -154,6 +172,8 @@ export type InputItem = {
     valid_ext?: string[];
     placeholder?: string;
     isClearable?: boolean;
+    quickField?: boolean;
+    isRelationField?: boolean;
 }
 
 export type SelectOption = {

@@ -8,6 +8,7 @@ const getFromCache = (queryClient: QueryClient) => {
 };
 
 export const useAgents = (queryClient: QueryClient) => {
+
     return useQuery({
         queryKey: ['agents'],
         queryFn: async () => {
