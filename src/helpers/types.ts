@@ -174,6 +174,7 @@ export type InputItem = {
     isClearable?: boolean;
     quickField?: boolean;
     isRelationField?: boolean;
+    isFilterField?: boolean;
 }
 
 export type SelectOption = {

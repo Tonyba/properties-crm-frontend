@@ -143,7 +143,8 @@ export const DocumentUploadFormFields: InputItem[] = [
         label: 'Title',
         type: 'text',
         required: true,
-        quickField: true
+        quickField: true,
+        isFilterField: true
     },
     {
         key: 'assigned_to',
@@ -151,7 +152,8 @@ export const DocumentUploadFormFields: InputItem[] = [
         type: 'select',
         required: true,
         isClearable: false,
-        quickField: true
+        quickField: true,
+        isFilterField: true
     },
     {
         key: 'note',

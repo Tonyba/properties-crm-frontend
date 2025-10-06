@@ -2,9 +2,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import { create_task } from "../api/tasks";
 import { useModuleHeader } from "./useModuleHeader";
-import type { Activities, SelectOption, Task, TaxonomiesArr } from "../helpers/types";
-import moment from "moment";
-
 
 export const useTaskMutation = () => {
 
@@ -19,11 +16,13 @@ export const useTaskMutation = () => {
             await queryClient.invalidateQueries({ queryKey: [`${moduleSingle}/Tasks/${params.leadId}`] });
             await queryClient.invalidateQueries({ queryKey: [`${moduleSingle}/Activities/${params.leadId}`] });
             await queryClient.invalidateQueries({ queryKey: [`updates/${params.leadId}`] });
+            await queryClient.invalidateQueries({ queryKey: [`${moduleSingle}/detail/${params.leadId}/list`] })
         },
         onMutate: async () => {
             await queryClient.cancelQueries({ queryKey: [`${moduleSingle}/Tasks/${params.leadId}`] });
             await queryClient.cancelQueries({ queryKey: [`${moduleSingle}/Activities/${params.leadId}`] });
             await queryClient.cancelQueries({ queryKey: [`updates/${params.leadId}`] });
+            await queryClient.cancelQueries({ queryKey: [`${moduleSingle}/detail/${params.leadId}/list`] })
         },
         onError: (e) => {
             console.log(e)

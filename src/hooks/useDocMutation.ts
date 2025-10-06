@@ -13,10 +13,12 @@ export const useDocMutation = (queryClient: QueryClient) => {
         onSuccess: async () => {
             await queryClient.invalidateQueries({ queryKey: [`${moduleSingle}/Documents/${params.leadId}`] });
             await queryClient.invalidateQueries({ queryKey: [`updates/${params.leadId}`] });
+            await queryClient.invalidateQueries({ queryKey: [`${moduleSingle}-docs/detail/${params.leadId}/list`] });
         },
         onMutate: async ({ }) => {
             await queryClient.cancelQueries({ queryKey: [`${moduleSingle}/Documents/${params.leadId}`] });
             await queryClient.cancelQueries({ queryKey: [`updates/${params.leadId}`] });
+            await queryClient.cancelQueries({ queryKey: [`${moduleSingle}-docs/detail/${params.leadId}/list`] });
         },
         onError: (e) => {
             console.log(e)

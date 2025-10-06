@@ -1,6 +1,7 @@
 import type { QueryClient } from "@tanstack/react-query";
-import type { AddSelectsResponse, SelectOption } from "./types";
-import { ValidExt, validSizeInMB } from "./constants";
+import type { AddSelectsResponse, GenericResponse, SelectOption } from "./types";
+import { API_URL, ValidExt, validSizeInMB } from "./constants";
+import axios from "axios";
 
 export const formatSelectOpt = (label: string, value: string): SelectOption => {
     return { label, value };
@@ -66,6 +67,20 @@ export const capitalizeFirstLetter = (str?: string) => {
     }
     return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
 }
+
+export const invalidateSingle = async (key: string, id: string | number, queryClient: QueryClient) => {
+    await queryClient.invalidateQueries({ queryKey: [`${key}/Tasks/${id}`] });
+    await queryClient.invalidateQueries({ queryKey: [`${key}/Activities/${id}`] });
+    await queryClient.invalidateQueries({ queryKey: [`updates/${id}`] });
+    await queryClient.invalidateQueries({ queryKey: [`${key}/detail/list`] });
+    await queryClient.invalidateQueries({ queryKey: [`${key}-docs/detail/list`] });
+}
+
+export const trashItem = async (item: number, relation: string) => axios.post<GenericResponse>(`${API_URL}?action=trash_item`, new URLSearchParams({ id: item.toString(), relation: relation.toString() }));
+
+export const escapeHtml = (unsafe: string) => {
+    return unsafe.replace(/&amp;/g, "&");
+};
 
 export {
     megabytesToBytes

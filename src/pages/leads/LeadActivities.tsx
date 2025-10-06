@@ -3,11 +3,11 @@ import { useAgents } from "../../hooks/useAgents";
 import { useEffect, useState } from "react";
 import { EventFormFields } from "../../helpers/constants";
 import { useActivitiesList } from "../../hooks/useActivitiesList";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import DataTable from 'react-data-table-component';
 import TableFilters from "../../ui/table_filters/TableFilters";
 import { useTaxonomies } from "../../hooks/useTaxonomies";
-import type { InputItem } from "../../helpers/types";
+import type { Event, InputItem } from "../../helpers/types";
 
 const eventFields = EventFormFields.map(field => {
 
@@ -33,7 +33,7 @@ const LeadActivities = () => {
 
     const [fields, setFields] = useState(eventFields);
 
-
+    const { leadId } = useParams();
     const { data: taxonomies } = useTaxonomies('event');
 
 
@@ -46,7 +46,7 @@ const LeadActivities = () => {
         filters: {} as Event
     });
 
-    const { data: activities, isPending } = useActivitiesList<Event>('leads', request);
+    const { data: activities, isPending } = useActivitiesList<Event>(request);
 
     const handlePaginationChange = (page: number) => {
         setRequest({ ...request, page });
@@ -69,6 +69,14 @@ const LeadActivities = () => {
             if (filter.value) newFilters[filter.key] = filter.value
         });
 
+        const findTaskIndex = newFilters['event_type']?.findIndex((type: string) => type == 'task');
+
+        if (findTaskIndex != -1 && findTaskIndex != undefined) {
+            newFilters['event_type']?.splice(findTaskIndex, 1);
+            if (newFilters['event_type']?.length == 0) delete newFilters['event_type'];
+            newFilters['selected_types'] = 'task';
+        }
+
         setRequest({ ...request, page: 1, filters: newFilters });
     }
 
@@ -76,6 +84,8 @@ const LeadActivities = () => {
 
         const newFields = [...fields];
         const assigned_index = newFields.findIndex(field => field.key == 'assigned_to');
+        const event_type_index = newFields.findIndex(field => field.key == 'event_type');
+
 
         if (assigned_index != -1 && agents) {
             newFields[assigned_index].options = agents?.map((agent) => ({ label: agent.name, value: agent.id.toString() }));
@@ -83,20 +93,24 @@ const LeadActivities = () => {
 
         if (taxonomies) {
             const taxs = Object.keys(taxonomies);
-            console.log(newFields)
             taxs.map(tax => {
                 const foundIndex = newFields.findIndex(field => field.key == tax);
                 if (newFields[foundIndex]) newFields[foundIndex].options = taxonomies[tax];
             })
         }
 
+
+        if (event_type_index != 1) {
+            const found = newFields[event_type_index].options?.find(opt => opt.value == 'task');
+            if (!found) newFields[event_type_index].options?.push({ label: 'Task', value: 'task' });
+        }
+
         const invalidate = async () => {
-            await queryClient.invalidateQueries({ queryKey: [`leads/detail/list`] });
+            await queryClient.invalidateQueries({ queryKey: [`leads/${leadId}/detail/list`] });
         };
         if (!firstTime) invalidate();
 
 
-        console.log(fields)
         setFields(newFields);
 
         return () => { }
@@ -108,7 +122,11 @@ const LeadActivities = () => {
             <TableFilters searchFn={handleSearch} filters={fields} />
 
             <DataTable
-                columns={[...dataCols]}
+                columns={[{
+                    name: 'Actions',
+                    cell: (row: any) => (
+                        <div>{row.id}</div>),
+                }, ...dataCols]}
                 progressPending={isPending}
                 responsive
                 highlightOnHover
