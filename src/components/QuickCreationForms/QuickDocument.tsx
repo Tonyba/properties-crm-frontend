@@ -26,11 +26,11 @@ const QuickDocument = () => {
 
     const maxMb = 5;
 
-    const { data } = useQuery(useSingleLead(params.leadId!, false, queryClient));
+    const { data } = useSingleLead();
     const lead = data as Lead;
 
     const [fields, setFields] = useState(DocumentUploadFormFields);
-    const [document, setDocument] = useState<Document>({ ...defaultDocument, relation: parseInt(params.leadId!), assigned_to: lead?.assigned_to });
+    const [document, setDocument] = useState<Document>({ ...defaultDocument, relation: parseInt(params.id!), assigned_to: lead?.assigned_to });
     const { data: agents } = useAgents(queryClient);
     const { data: doc_taxonomies } = useTaxonomies('document');
 

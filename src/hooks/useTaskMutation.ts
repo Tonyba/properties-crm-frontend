@@ -13,16 +13,16 @@ export const useTaskMutation = () => {
     return useMutation({
         mutationFn: create_task,
         onSuccess: async () => {
-            await queryClient.invalidateQueries({ queryKey: [`${moduleSingle}/Tasks/${params.leadId}`] });
-            await queryClient.invalidateQueries({ queryKey: [`${moduleSingle}/Activities/${params.leadId}`] });
-            await queryClient.invalidateQueries({ queryKey: [`updates/${params.leadId}`] });
-            await queryClient.invalidateQueries({ queryKey: [`${moduleSingle}/detail/${params.leadId}/list`] })
+            await queryClient.invalidateQueries({ queryKey: [`${moduleSingle}/Tasks/${params.id}`] });
+            await queryClient.invalidateQueries({ queryKey: [`${moduleSingle}/Activities/${params.id}`] });
+            await queryClient.invalidateQueries({ queryKey: [`updates/${params.id}`] });
+            await queryClient.invalidateQueries({ queryKey: [`${moduleSingle}/detail/${params.id}/list`] })
         },
         onMutate: async () => {
-            await queryClient.cancelQueries({ queryKey: [`${moduleSingle}/Tasks/${params.leadId}`] });
-            await queryClient.cancelQueries({ queryKey: [`${moduleSingle}/Activities/${params.leadId}`] });
-            await queryClient.cancelQueries({ queryKey: [`updates/${params.leadId}`] });
-            await queryClient.cancelQueries({ queryKey: [`${moduleSingle}/detail/${params.leadId}/list`] })
+            await queryClient.cancelQueries({ queryKey: [`${moduleSingle}/Tasks/${params.id}`] });
+            await queryClient.cancelQueries({ queryKey: [`${moduleSingle}/Activities/${params.id}`] });
+            await queryClient.cancelQueries({ queryKey: [`updates/${params.id}`] });
+            await queryClient.cancelQueries({ queryKey: [`${moduleSingle}/detail/${params.id}/list`] })
         },
         onError: (e) => {
             console.log(e)

@@ -1,11 +1,11 @@
-import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query"
-import { Link, NavLink, useParams, Outlet } from "react-router";
+import { useSuspenseQuery } from "@tanstack/react-query"
+import { Link, NavLink, Outlet } from "react-router";
 import { ModuleContentWrapper } from "../../components/wrappers";
 import { FaAddressCard } from "react-icons/fa";
 import { iconSize } from "../../helpers/constants";
 import { FaWhatsapp } from "react-icons/fa";
 
-import { useSingleLead } from "../../hooks/useSingleLead";
+import { useSingleLead, useSingleLeadSuspense } from "../../hooks/useSingleLead";
 import type { Lead } from "../../helpers/types";
 import { FilterButton } from "../../components/FilterButton";
 import { WhatsappBtn } from "../../components/WhatsappBtn";
@@ -18,11 +18,7 @@ import { LeadOptions } from "../../helpers/menus";
 
 export default function LeadDetails() {
 
-    const params = useParams();
-    const queryClient = useQueryClient();
-
-
-    const { data: lead } = useSuspenseQuery(useSingleLead(params.leadId ?? '', true, queryClient));
+    const { data: lead } = useSuspenseQuery(useSingleLeadSuspense(true));
     const singleLead = lead as Lead;
 
     const dropDownBtnRef = useRef<HTMLDivElement>(null);

@@ -26,7 +26,7 @@ function findPathProps(pathKey: string, params: Readonly<Params<string>>) {
 
     let props: ModuleHeaderPropsType = {};
 
-    const leadId = params.leadId;
+    const id = params.id;
 
     routes?.map((item) => {
 
@@ -39,7 +39,7 @@ function findPathProps(pathKey: string, params: Readonly<Params<string>>) {
                 children.some((child) => {
 
                     let match = child as RouterItem;
-                    if (leadId) match.path = match.path?.replace(':leadId', leadId);
+                    if (id) match.path = match.path?.replace(':id', id);
 
                     if (!moduleExt && child.index) {
                         if (match.headerProps) {

@@ -8,6 +8,7 @@ import DataTable from 'react-data-table-component';
 import TableFilters from "../../ui/table_filters/TableFilters";
 import { useTaxonomies } from "../../hooks/useTaxonomies";
 import type { Event, InputItem } from "../../helpers/types";
+import { ActivitiesAction } from "../../components/tableActions/ActivitiesAction";
 
 const eventFields = EventFormFields.map(field => {
 
@@ -33,7 +34,7 @@ const LeadActivities = () => {
 
     const [fields, setFields] = useState(eventFields);
 
-    const { leadId } = useParams();
+    const { id } = useParams();
     const { data: taxonomies } = useTaxonomies('event');
 
 
@@ -106,7 +107,7 @@ const LeadActivities = () => {
         }
 
         const invalidate = async () => {
-            await queryClient.invalidateQueries({ queryKey: [`leads/${leadId}/detail/list`] });
+            await queryClient.invalidateQueries({ queryKey: [`leads/${id}/detail/list`] });
         };
         if (!firstTime) invalidate();
 
@@ -124,8 +125,7 @@ const LeadActivities = () => {
             <DataTable
                 columns={[{
                     name: 'Actions',
-                    cell: (row: any) => (
-                        <div>{row.id}</div>),
+                    cell: (row: any) => (<ActivitiesAction item={row} />),
                 }, ...dataCols]}
                 progressPending={isPending}
                 responsive

@@ -77,7 +77,7 @@ export const routesFn = (queryClient?: QueryClient) => {
                         },
                         {
                             label: 'Lead Details',
-                            path: 'leads/:leadId/details',
+                            path: 'leads/:id/details',
                             loader: queryClient && leadDetailsLoader(queryClient),
                             Component: LeadDetails,
                             headerProps: {
@@ -129,7 +129,7 @@ export const routesFn = (queryClient?: QueryClient) => {
                         },
                         {
                             label: 'Edit Lead',
-                            path: 'leads/:leadId/edit',
+                            path: 'leads/:id/edit',
                             Component: AddLead,
                             loader: queryClient && leadAddLoader(queryClient),
                             headerProps: {

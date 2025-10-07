@@ -7,15 +7,15 @@ import { useModuleHeader } from "./useModuleHeader";
 
 export const useActivitiesList = <T>(request: ListLeadRequest<T>) => {
     const queryClient = useQueryClient();
-    const { leadId } = useParams();
+    const { id } = useParams();
     const [createPath, filter, importBtn, moduleSingle, showCreateBtn] = useModuleHeader();
 
     return useQuery({
-        queryKey: [`${moduleSingle}/detail/${leadId}/list`, `${moduleSingle}/detail/${leadId}/list-page/${request.page}`],
+        queryKey: [`${moduleSingle}/detail/${id}/list`, `${moduleSingle}/detail/${id}/list-page/${request.page}`],
         queryFn: async () => {
-            const cache = getFromCache<GetLeadsResponse<T>>(`${moduleSingle}/detail/${leadId}/list-page/${request.page}`, queryClient);
+            const cache = getFromCache<GetLeadsResponse<T>>(`${moduleSingle}/detail/${id}/list-page/${request.page}`, queryClient);
             if (cache) return cache;
-            if (leadId) request.filters = { ...request.filters, relation: leadId } as T;
+            if (id) request.filters = { ...request.filters, relation: id } as T;
 
             const data = await get_activities<T>(request);
             return data.data;

@@ -25,7 +25,7 @@ const quickFields = TaskFormFields.filter(field => field.quickField);
 export const QuickTask = () => {
 
     const queryClient = useQueryClient();
-    const { leadId } = useParams();
+    const { id } = useParams();
 
     const [fields, setFields] = useState(quickFields);
 
@@ -35,10 +35,10 @@ export const QuickTask = () => {
     const [task, setTask] = useState<Task>({
         from: moment().format(),
         to: moment().format(),
-        relation: parseInt(leadId!)
+        relation: parseInt(id!)
     } as Task);
 
-    const { data } = useQuery(useSingleLead(leadId!, false, queryClient));
+    const { data } = useSingleLead();
     const lead = data as Lead;
 
     const { data: taxonomies } = useTaxonomies('task');

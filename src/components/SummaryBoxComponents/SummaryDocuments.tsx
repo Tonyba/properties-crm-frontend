@@ -1,16 +1,10 @@
 import type { BoxData, Document } from '../../helpers/types'
 import ReactHtmlParser from 'react-html-parser';
-import { CiImageOn } from "react-icons/ci";
-import { FiDownload } from "react-icons/fi";
-import { download_document } from '../../api/documents';
 import { DocumentsActions } from '../tableActions/DocumentsActions';
 
 
 
 export const SummaryDocuments = ({ data }: BoxData<Document>) => {
-
-
-
 
     return (
         <>

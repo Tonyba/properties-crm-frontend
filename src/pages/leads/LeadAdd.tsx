@@ -15,7 +15,7 @@ import { searchPropertyById, searchPropertyByName } from "../../hooks/searchProp
 import { SaveBottomBar } from "../../components/SaveBottomBar";
 import { create_lead, edit_lead } from "../../api/leads";
 import { useNavigate, useParams } from "react-router";
-import { useSingleLead } from "../../hooks/useSingleLead";
+import { useSingleLead, useSingleLeadSuspense } from "../../hooks/useSingleLead";
 import { formatData } from "../../helpers/helpers";
 
 const defaultLead = {} as Lead;
@@ -26,7 +26,7 @@ export default function LeadAdd() {
 
     const queryClient = useQueryClient();
     const params = useParams();
-    const { data: lead } = useSuspenseQuery(useSingleLead(params.leadId ?? '', true, queryClient));
+    const { data: lead } = useSuspenseQuery(useSingleLeadSuspense(true));
     const initLead = lead as Lead;
 
 

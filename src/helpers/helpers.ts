@@ -2,6 +2,8 @@ import type { QueryClient } from "@tanstack/react-query";
 import type { AddSelectsResponse, GenericResponse, SelectOption } from "./types";
 import { API_URL, ValidExt, validSizeInMB } from "./constants";
 import axios from "axios";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
 export const formatSelectOpt = (label: string, value: string): SelectOption => {
     return { label, value };
@@ -68,12 +70,51 @@ export const capitalizeFirstLetter = (str?: string) => {
     return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
 }
 
-export const invalidateSingle = async (key: string, id: string | number, queryClient: QueryClient) => {
+export const invalidateSingle = async (key: string, id: string | number, moduleSingle: string, queryClient: QueryClient) => {
     await queryClient.invalidateQueries({ queryKey: [`${key}/Tasks/${id}`] });
     await queryClient.invalidateQueries({ queryKey: [`${key}/Activities/${id}`] });
+    await queryClient.invalidateQueries({ queryKey: [`${moduleSingle}/Documents/${id}`] });
     await queryClient.invalidateQueries({ queryKey: [`updates/${id}`] });
     await queryClient.invalidateQueries({ queryKey: [`${key}/detail/list`] });
     await queryClient.invalidateQueries({ queryKey: [`${key}-docs/detail/list`] });
+    await queryClient.invalidateQueries({ queryKey: [`${moduleSingle}/${key}/${id}`] });
+    await queryClient.invalidateQueries({ queryKey: [`${moduleSingle}-docs/detail/${id}/list`] });
+    await queryClient.invalidateQueries({ queryKey: [`${moduleSingle}/detail/${id}/list`] })
+}
+
+export const handleItemDeletion = async (
+    id: number,
+    relationId: string,
+    queryClient: QueryClient,
+    key: string,
+    moduleSingle?: string
+) => {
+    withReactContent(Swal).fire({
+        title: 'Are you sure that you want to delete?',
+        showCancelButton: true,
+        showConfirmButton: true,
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No',
+        showLoaderOnConfirm: true,
+        allowOutsideClick: () => !Swal.isLoading(),
+        preConfirm: async () => {
+            try {
+                if (relationId) {
+                    await trashItem(id, relationId);
+                    await invalidateSingle(key, relationId, moduleSingle ?? 'module', queryClient);
+                }
+            } catch (error) {
+                Swal.showValidationMessage(`
+                            Request failed: ${error}
+                        `);
+            }
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire('Deleted!', '', 'success');
+        }
+    });
+
 }
 
 export const trashItem = async (item: number, relation: string) => axios.post<GenericResponse>(`${API_URL}?action=trash_item`, new URLSearchParams({ id: item.toString(), relation: relation.toString() }));

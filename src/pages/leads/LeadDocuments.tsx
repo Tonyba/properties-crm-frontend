@@ -35,7 +35,7 @@ const LeadDocuments = () => {
     const queryClient = useQueryClient();
     const [createPath, filter, importBtn, moduleSingle, showCreateBtn] = useModuleHeader();
 
-    const { leadId } = useParams();
+    const { id } = useParams();
 
     const [request, setRequest] = useState({
         perPage: 20,
@@ -90,7 +90,7 @@ const LeadDocuments = () => {
         }
 
         const invalidate = async () => {
-            await queryClient.invalidateQueries({ queryKey: [`${moduleSingle}-docs/detail/${leadId}/list`] });
+            await queryClient.invalidateQueries({ queryKey: [`${moduleSingle}-docs/detail/${id}/list`] });
         };
         if (!firstTime) invalidate();
 
@@ -108,7 +108,7 @@ const LeadDocuments = () => {
                 columns={[{
                     name: 'Actions',
                     cell: (row: any) => (
-                        <DocumentsActions {...row} />
+                        <DocumentsActions {...row} delete={true} />
                     ),
                 }, ...dataCols]}
                 progressPending={isPending}

@@ -11,14 +11,14 @@ export const useDocMutation = (queryClient: QueryClient) => {
     return useMutation({
         mutationFn: create_document,
         onSuccess: async () => {
-            await queryClient.invalidateQueries({ queryKey: [`${moduleSingle}/Documents/${params.leadId}`] });
-            await queryClient.invalidateQueries({ queryKey: [`updates/${params.leadId}`] });
-            await queryClient.invalidateQueries({ queryKey: [`${moduleSingle}-docs/detail/${params.leadId}/list`] });
+            await queryClient.invalidateQueries({ queryKey: [`${moduleSingle}/Documents/${params.id}`] });
+            await queryClient.invalidateQueries({ queryKey: [`updates/${params.id}`] });
+            await queryClient.invalidateQueries({ queryKey: [`${moduleSingle}-docs/detail/${params.id}/list`] });
         },
         onMutate: async ({ }) => {
-            await queryClient.cancelQueries({ queryKey: [`${moduleSingle}/Documents/${params.leadId}`] });
-            await queryClient.cancelQueries({ queryKey: [`updates/${params.leadId}`] });
-            await queryClient.cancelQueries({ queryKey: [`${moduleSingle}-docs/detail/${params.leadId}/list`] });
+            await queryClient.cancelQueries({ queryKey: [`${moduleSingle}/Documents/${params.id}`] });
+            await queryClient.cancelQueries({ queryKey: [`updates/${params.id}`] });
+            await queryClient.cancelQueries({ queryKey: [`${moduleSingle}-docs/detail/${params.id}/list`] });
         },
         onError: (e) => {
             console.log(e)

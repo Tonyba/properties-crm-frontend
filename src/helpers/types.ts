@@ -1,4 +1,5 @@
 import type { RouteObject } from "react-router";
+import type { ActionOptType } from "../components/SummaryBoxComponents/SummaryBox";
 
 export type Update = {
     id: number;
@@ -8,6 +9,13 @@ export type Update = {
     affected?: string;
     user: string;
     action: 'Edited' | 'Created' | 'Contact	Converted to Contact' | 'Trashed' | 'Linked';
+}
+
+export type SummaryBoxAction = {
+    action: string,
+    isWithSelect?: boolean,
+    action_fn?: Function,
+    options?: ActionOptType[]
 }
 
 export type WithDataId = {
@@ -77,6 +85,7 @@ export type Activities = {
     title: string;
     id: number;
     status: string;
+    relation?: number;
 }
 
 export type GenericResponse = {

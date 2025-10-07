@@ -8,8 +8,8 @@ import { Timeline, type TimelineItem } from '../../ui/timeline/Timeline';
 const LeadUpdates = () => {
 
     const queryClient = useQueryClient();
-    const { leadId } = useParams();
-    const { data } = useUpdates<GetUpdateResponseType>(leadId ?? '', queryClient);
+    const { id } = useParams();
+    const { data } = useUpdates<GetUpdateResponseType>(id ?? '', queryClient);
 
     const updates = data?.data;
     const formatted: TimelineItem[] = updates ? updates.map(update => ({

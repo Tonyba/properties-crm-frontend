@@ -18,11 +18,11 @@ import { useLeadUpdate } from "../../hooks/useLeadUpdate";
 
 function LeadData() {
 
-    const { leadId } = useParams();
+    const { id } = useParams();
     const queryClient = useQueryClient();
     const textAreaRef = useRef<HTMLTemplateElement>(null);
 
-    const lead = queryClient.getQueryData<Lead>([`lead/${leadId}`]);
+    const lead = queryClient.getQueryData<Lead>([`lead/${id}`]);
 
     const { data: { data } } = useSuspenseQuery(selectsLeadQuery());
 
@@ -83,7 +83,7 @@ function LeadData() {
     );
 
 
-    const { mutate } = useLeadUpdate(leadId ?? '', lead as Lead, queryClient);
+    const { mutate } = useLeadUpdate(id ?? '', lead as Lead, queryClient);
 
 
     useEffect(() => {

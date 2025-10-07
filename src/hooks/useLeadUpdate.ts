@@ -3,18 +3,18 @@ import { edit_lead } from "../api/leads";
 import type { Lead } from "../helpers/types";
 
 
-export const useLeadUpdate = (leadId: string, lead: Lead, queryClient: QueryClient) => {
+export const useLeadUpdate = (id: string, lead: Lead, queryClient: QueryClient) => {
     return useMutation({
         mutationFn: edit_lead,
         onSuccess: async () => {
-            await queryClient.invalidateQueries({ queryKey: [`updates/${leadId}`] });
+            await queryClient.invalidateQueries({ queryKey: [`updates/${id}`] });
             await queryClient.invalidateQueries({ queryKey: ['leads', 'list'] });
-            await queryClient.invalidateQueries({ queryKey: [`lead/${leadId}`] });
+            await queryClient.invalidateQueries({ queryKey: [`lead/${id}`] });
         },
         onMutate: async (newLead: Lead) => {
-            await queryClient.cancelQueries({ queryKey: [`updates/${leadId}`] });
-            await queryClient.cancelQueries({ queryKey: [`lead/${leadId}`] });
-            queryClient.setQueryData([`lead/${leadId}`], newLead);
+            await queryClient.cancelQueries({ queryKey: [`updates/${id}`] });
+            await queryClient.cancelQueries({ queryKey: [`lead/${id}`] });
+            queryClient.setQueryData([`lead/${id}`], newLead);
             return lead;
         },
         onError: () => {

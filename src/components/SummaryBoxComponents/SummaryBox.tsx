@@ -7,6 +7,8 @@ import { SummaryBoxData } from "./SummaryBoxData"
 import { SingleBoxContainer, SingleBoxTitle } from "../SingleDetailBox"
 import { Dropdown } from "../Dropdown"
 import { FilterButton } from "../FilterButton"
+import { SummaryActions } from "./SummaryActions"
+import type { SummaryBoxAction } from "../../helpers/types"
 
 export type ActionOptType = {
     label: string,
@@ -18,12 +20,7 @@ interface SummaryBoxProps {
     title: string,
     noFoundMessage?: string,
     isComments?: boolean,
-    actions?: {
-        action: string,
-        isWithSelect?: boolean,
-        action_fn?: Function,
-        options?: ActionOptType[]
-    }[]
+    actions?: SummaryBoxAction[]
 }
 
 export const SummaryBox = ({ title, actions, noFoundMessage }: SummaryBoxProps) => {
@@ -32,23 +29,7 @@ export const SummaryBox = ({ title, actions, noFoundMessage }: SummaryBoxProps) 
         <SingleBoxContainer>
             <SingleBoxTitle>
                 <IoChevronDown /> {title}
-                <div className="ml-auto font-normal flex gap-2" >
-                    {actions?.map(({ action, isWithSelect, action_fn, options }, key) => {
-
-                        return isWithSelect
-                            ? <Dropdown key={key} callback={action_fn} options={options ? options : []} triggerElement={
-                                <FilterButton key={key} className="ml-auto font-normal relative" >
-                                    <FaPlus />
-                                    New {action}
-                                    {isWithSelect && <FaCaretDown />}
-                                </FilterButton>
-                            }></Dropdown>
-                            : <FilterButton onClick={action_fn} key={key} className="ml-auto font-normal relative" >
-                                <FaPlus />
-                                New {action}
-                            </FilterButton>
-                    })}
-                </div>
+                <SummaryActions summaryActions={actions ?? []} />
             </SingleBoxTitle>
 
             <div className="text-center text-sm">

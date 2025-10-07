@@ -16,7 +16,7 @@ const SummaryBoxDataContainer = tw.div``;
 export const SummaryBoxData = ({ noFoundMessage, boxKey }: SummaryBoxDataProps) => {
 
     const params = useParams();
-    const { data } = useQuery(useRelated(params.id || params.leadId || '', boxKey));
+    const { data } = useQuery(useRelated(params.id || params.id || '', boxKey));
 
     const List = () => {
 

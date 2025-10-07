@@ -19,7 +19,7 @@ const quickFields = EventFormFields.filter(field => field.quickField);
 
 export const QuickEvent = () => {
     const queryClient = useQueryClient();
-    const { leadId } = useParams();
+    const { id } = useParams();
 
     const [fields, setFields] = useState(quickFields);
 
@@ -29,10 +29,10 @@ export const QuickEvent = () => {
     const [event, setEvent] = useState<Event>({
         from: moment().format(),
         to: moment().format(),
-        relation: parseInt(leadId!)
+        relation: parseInt(id!)
     } as Event);
 
-    const { data } = useQuery(useSingleLead(leadId!, false, queryClient));
+    const { data } = useSingleLead();
     const lead = data as Lead;
 
     const { data: taxonomies } = useTaxonomies('event');
@@ -40,7 +40,7 @@ export const QuickEvent = () => {
     const { data: offcanvasOpts } = useOffcanvas({ queryClient });
     const { mutate: mutateOffcanvas } = useOffcanvasMutation({ queryClient });
 
-    const { mutate, status } = useEventMutation();
+    const { mutate, status } = useEventMutation('create');
 
     const handleCancel = () => {
         mutateOffcanvas({ queryClient, offCanvasOpts: { ...offcanvasOpts, open: false } })

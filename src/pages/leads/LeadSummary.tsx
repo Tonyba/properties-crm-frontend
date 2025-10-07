@@ -24,10 +24,10 @@ const keyFields = leadFields.filter(item => item.required);
 
 const LeadSummary = () => {
 
-    const { leadId } = useParams();
+    const { id } = useParams();
     const queryClient = useQueryClient();
 
-    const lead = queryClient.getQueryData<Lead>([`lead/${leadId}`]);
+    const lead = queryClient.getQueryData<Lead>([`lead/${id}`]);
     const { data: agents } = useAgents(queryClient);
 
     const [leadData, setLeadData] = useState<Lead & { readonly: true }>(lead as Lead & { readonly: true });
@@ -38,10 +38,8 @@ const LeadSummary = () => {
 
 
     const handleEditBtn = (key: string) => {
-
         const selected = readOnlyFields.findIndex(field => field.key == key);
         let newVal = [...readOnlyFields];
-
         newVal = newVal.map(val => ({ ...val, readonly: true, visible: false }));
         newVal[selected].visible = true;
         newVal[selected].readonly = false;
@@ -60,7 +58,7 @@ const LeadSummary = () => {
         setReadOnlyFields(readOnlyFields.map(val => ({ ...val, readonly: true, visible: false })));
     }
 
-    const { mutate } = useLeadUpdate(leadId ?? '', lead as Lead, queryClient);
+    const { mutate } = useLeadUpdate(id ?? '', lead as Lead, queryClient);
 
     const docsOpts = [
         {
@@ -146,7 +144,9 @@ const LeadSummary = () => {
                                 }
 
                                 {
-                                    (!readOnlyFields.find(field => field.key == key)?.visible && !readOnlyFields.some(field => field.visible == true)) && <button onClick={() => handleEditBtn(key)} className="invisible group-hover:visible  cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 bg-white p-1"><CiEdit /></button>
+                                    (!readOnlyFields.find(field => field.key == key)?.visible &&
+                                        !readOnlyFields.some(field => field.visible == true)) &&
+                                    <button onClick={() => handleEditBtn(key)} className="invisible group-hover:visible  cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 bg-white p-1"><CiEdit /></button>
                                 }
 
                                 {
