@@ -4,8 +4,7 @@ import { useParams } from "react-router";
 import { useEffect, useState, type ChangeEvent } from "react";
 import { useAgents } from "../../hooks/useAgents";
 import moment from "moment";
-import type { Lead, SelectOption, Event } from "../../helpers/types";
-import { useSingleLead } from "../../hooks/useSingleLead";
+import type { SelectOption, Event } from "../../helpers/types";
 import { useTaxonomies } from "../../hooks/useTaxonomies";
 import { useOffcanvas, useOffcanvasMutation } from "../../hooks/useOffcanvas";
 import { useEventMutation } from "../../hooks/useEventMutation";
@@ -13,17 +12,23 @@ import { DateFormat, EventFormFields } from "../../helpers/constants";
 import { QuickForm } from "../QuickForm";
 import { Input, TextArea } from "../InputForm";
 import Select from 'react-select';
+import { useGetSingle } from "../../hooks/useGetSingle";
+import { useModuleHeader } from "../../hooks/useModuleHeader";
 
 const quickFields = EventFormFields.filter(field => field.quickField);
-
+const defaultGetSingleFn = (id: string, update?: boolean) => new Promise(() => { });
 
 export const QuickEvent = () => {
+
+    const [createPath, filter, importBtn, moduleSingle, showCreateBtn] = useModuleHeader();
+
     const queryClient = useQueryClient();
     const { id } = useParams();
+    const [getSingleFn, setSingleFn] = useState<(id: string, updating?: boolean | undefined) => Promise<any>>(defaultGetSingleFn);
 
     const [fields, setFields] = useState(quickFields);
 
-    const { data: agents } = useAgents(queryClient);
+    const { data: agents } = useAgents();
 
 
     const [event, setEvent] = useState<Event>({
@@ -32,8 +37,7 @@ export const QuickEvent = () => {
         relation: parseInt(id!)
     } as Event);
 
-    const { data } = useSingleLead();
-    const lead = data as Lead;
+    const { data } = useGetSingle({});
 
     const { data: taxonomies } = useTaxonomies('event');
 
@@ -55,6 +59,7 @@ export const QuickEvent = () => {
     }
 
     useEffect(() => {
+
         let newFields = [...fields];
         const assigned_index = newFields.findIndex(field => field.key == 'assigned_to');
 
@@ -73,7 +78,7 @@ export const QuickEvent = () => {
         }
 
         setFields(newFields);
-        setEvent({ ...event, assigned_to: lead.assigned_to });
+        setEvent({ ...event, assigned_to: data.assigned_to });
 
         return () => { }
     }, [taxonomies]);

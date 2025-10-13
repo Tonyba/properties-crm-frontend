@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { get_taxonomies_terms } from "../api/taxonomies";
 
-type KeyTaxonomy = 'document' | 'task' | 'event' | 'property' | 'lead';
+type KeyTaxonomy = 'document' | 'task' | 'event' | 'property' | 'lead' | 'contact';
 
 export const useTaxonomiesInLoop = () => {
     return {

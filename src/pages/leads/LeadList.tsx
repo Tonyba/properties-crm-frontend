@@ -20,7 +20,7 @@ const dataCols = leadFields.map(col => ({
 const LeadList = () => {
     const queryClient = useQueryClient();
     const navigate = useNavigate();
-    const { data: agents } = useAgents(queryClient);
+    const { data: agents } = useAgents();
     leadFields.map(field => {
         if (field.key == 'assigned_to') {
             field.options = agents?.map(agent => ({ label: agent.name, value: agent.id.toString() }));

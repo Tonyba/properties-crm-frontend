@@ -6,37 +6,46 @@ import { FaFileExport } from "react-icons/fa";
 
 import { useState, type ChangeEvent } from "react";
 import { SingleBoxContainer, SingleBoxTitle } from "../../components/SingleDetailBox"
-import { leadFields } from "../../helpers/constants"
+import { contactFilterFields } from "../../helpers/constants"
 import { useParams } from "react-router";
 import { Input } from "../../components/InputForm";
 import { useQueryClient } from "@tanstack/react-query";
-import type { Lead, SelectOption } from "../../helpers/types";
+import type { Contact, Lead, SelectOption } from "../../helpers/types";
 
 import Select from 'react-select';
 import { formatSelectOpt } from "../../helpers/helpers";
 import { useAgents } from "../../hooks/useAgents";
 
 import { SummaryBox } from "../../components/SummaryBoxComponents/SummaryBox";
-import { useLeadUpdate } from "../../hooks/useLeadUpdate";
 import { useOffcanvas, useOffcanvasMutation } from "../../hooks/useOffcanvas";
+import { useMutateSingle } from "../../hooks/useMutateSingle";
+import { create_contact, edit_contact } from "../../api/contacts";
+import { useModuleHeader } from "../../hooks/useModuleHeader";
 
-const keyFields = leadFields.filter(item => item.required);
+const keyFields = contactFilterFields;
 
-const LeadSummary = () => {
+
+const ContactSummary = () => {
 
     const { id } = useParams();
     const queryClient = useQueryClient();
+    const [createPath, filter, importBtn, moduleSingle, showCreateBtn] = useModuleHeader();
 
-    const lead = queryClient.getQueryData<Lead>([`lead/${id}`]);
+    const initData = queryClient.getQueryData<Lead>([`${moduleSingle}/${id}`]);
     const { data: agents } = useAgents();
 
-    const [leadData, setLeadData] = useState<Lead & { readonly: true }>(lead as Lead & { readonly: true });
-    const [readOnlyFields, setReadOnlyFields] = useState(Object.keys(lead as Lead).map(key => ({ key, readonly: true, visible: false })));
+
+    const [data, setData] = useState<Contact & { readonly: true }>(initData as Contact & { readonly: true });
+    const [readOnlyFields, setReadOnlyFields] = useState(Object.keys(initData as Contact).map(key => ({ key, readonly: true, visible: false })));
 
     const { data: offcanvasOpts } = useOffcanvas({ queryClient });
     const { mutate: mutateOffcanvas } = useOffcanvasMutation({ queryClient });
 
-    const { mutate } = useLeadUpdate(id ?? '', lead as Lead, queryClient);
+    const { mutate } = useMutateSingle({
+        createFn: create_contact,
+        updateFn: edit_contact,
+        isEditing: true
+    });
 
     const handleEditBtn = (key: string) => {
         const selected = readOnlyFields.findIndex(field => field.key == key);
@@ -51,11 +60,11 @@ const LeadSummary = () => {
         let newVal = [...readOnlyFields];
         newVal = newVal.map(val => ({ ...val, readonly: true, visible: false }));
         setReadOnlyFields(newVal);
-        setLeadData({ ...leadData, [key]: lead ? lead[key as keyof Lead] : '' });
+        setData({ ...data, [key]: data ? data[key as keyof Contact] : '' });
     }
 
     const saveChange = async () => {
-        mutate(leadData);
+        mutate(data);
         setReadOnlyFields(readOnlyFields.map(val => ({ ...val, readonly: true, visible: false })));
     }
 
@@ -111,19 +120,19 @@ const LeadSummary = () => {
                                 <label className="text-sm" htmlFor={key}>{label}</label>
 
                                 {
-                                    (type != 'select' && type != 'textarea' && required) && <Input
+                                    (type != 'select' && type != 'textarea') && <Input
                                         type={type}
                                         name={key}
                                         placeholder={label}
                                         id={key}
-                                        value={leadData?.[key as keyof Lead] ?? ""}
+                                        value={data?.[key as keyof Contact] ?? ""}
                                         readOnly={readOnlyFields.length ? readOnlyFields.find(field => field.key == key)?.readonly : true}
                                         className='w-1/2'
                                         onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                             const currentVal = e.target.value;
-                                            let newVal = { ...leadData };
+                                            let newVal = { ...data };
                                             (newVal as any)[key] = currentVal;
-                                            setLeadData(newVal);
+                                            setData(newVal);
                                         }}
                                     />
                                 }
@@ -132,12 +141,12 @@ const LeadSummary = () => {
                                     type == 'select' && <Select
                                         className="w-1/2"
                                         options={agents ? agents.map(agent => formatSelectOpt(agent.name, agent.id.toString())) : []}
-                                        value={leadData?.[key as keyof Lead] ? { value: leadData.assigned_to, label: agents?.find(agent => agent.id.toString() == leadData.assigned_to)?.name } : null}
+                                        value={data?.[key as keyof Contact] ? { value: data.assigned_to, label: agents?.find(agent => agent.id.toString() == data.assigned_to)?.name } : null}
                                         isDisabled={readOnlyFields.length ? readOnlyFields.find(field => field.key == key)?.readonly : true}
                                         onChange={(selectedOption) => {
-                                            let newVal = { ...leadData };
+                                            let newVal = { ...data };
                                             (newVal as any)[key] = (selectedOption as SelectOption)?.value;
-                                            setLeadData(newVal);
+                                            setData(newVal);
                                         }}
                                     />
                                 }
@@ -200,4 +209,4 @@ const LeadSummary = () => {
     )
 }
 
-export default LeadSummary
+export default ContactSummary;

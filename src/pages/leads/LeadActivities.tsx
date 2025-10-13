@@ -38,7 +38,7 @@ const LeadActivities = () => {
     const { data: taxonomies } = useTaxonomies('event');
 
 
-    const { data: agents } = useAgents(queryClient);
+    const { data: agents } = useAgents();
     const [firstTime, setFirstTime] = useState(true);
 
     const [request, setRequest] = useState({

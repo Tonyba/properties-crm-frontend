@@ -1,18 +1,18 @@
-import { useUpdates } from '../../hooks/useUpdates'
+import { useUpdates } from '../hooks/useUpdates'
 import { useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'react-router';
-import type { GetUpdateResponseType } from '../../helpers/types';
-import { Timeline, type TimelineItem } from '../../ui/timeline/Timeline';
+import type { GetUpdateResponseType, Update } from '../helpers/types';
+import { Timeline, type TimelineItem } from '../ui/timeline/Timeline';
 
 
-const LeadUpdates = () => {
+const UpdatesTab = () => {
 
     const queryClient = useQueryClient();
     const { id } = useParams();
     const { data } = useUpdates<GetUpdateResponseType>(id ?? '', queryClient);
 
     const updates = data?.data;
-    const formatted: TimelineItem[] = updates ? updates.map(update => ({
+    const formatted: TimelineItem[] = updates ? updates.map((update: Update) => ({
         action: update.action,
         date: update.date,
         user: update.user,
@@ -27,4 +27,4 @@ const LeadUpdates = () => {
     )
 }
 
-export default LeadUpdates
+export default UpdatesTab

@@ -1,6 +1,12 @@
 import type { RouteObject } from "react-router";
 import type { ActionOptType } from "../components/SummaryBoxComponents/SummaryBox";
 
+export type SingleModuleMoreBtnActionType = {
+    fn: () => void,
+    label: string,
+    isDivider?: boolean
+}
+
 export type Update = {
     id: number;
     date: string;
@@ -91,6 +97,11 @@ export type Activities = {
 export type GenericResponse = {
     ok: boolean;
     msg?: string;
+    data: any
+}
+
+export type QuickCreationProps = {
+    getSingleFn: (id: string, updating?: boolean) => Promise<any>
 }
 
 export type DocumentCreationResponse = {
@@ -136,6 +147,11 @@ export type ListLeadRequest<T> = {
 
 export type SingleLeadResponse = {
     lead: Lead;
+    ok: boolean;
+}
+
+export type GetSingleResponse<T> = {
+    data: T;
     ok: boolean;
 }
 
@@ -208,3 +224,25 @@ export type SearchPropertyByNameResponse = {
     title: string;
     id: number;
 }[];
+
+
+export type Contact = {
+    id: string | number;
+    first_name: string;
+    last_name: string;
+    office_phone: string;
+    mobile: string;
+    email: string;
+    secondary_email: string;
+    lead_source: number | string;
+    birthdate: string;
+    email_opt_out: boolean;
+    not_call: boolean;
+    assigned_to: number | string;
+    mailing_street?: string;
+    mailing_city?: string;
+    mailing_state?: string;
+    mailing_country?: string;
+    mailing_zip?: string
+    description?: string
+}

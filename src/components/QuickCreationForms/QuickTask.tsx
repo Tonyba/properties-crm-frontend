@@ -18,18 +18,21 @@ import { Input, TextArea } from "../InputForm";
 import { useAgents } from "../../hooks/useAgents";
 import { useTaxonomies } from "../../hooks/useTaxonomies";
 import { useTaskMutation } from "../../hooks/useTaskMutation";
+import { useModuleHeader } from "../../hooks/useModuleHeader";
+import { useGetSingle } from "../../hooks/useGetSingle";
 
 
 const quickFields = TaskFormFields.filter(field => field.quickField);
 
 export const QuickTask = () => {
 
+    const [createPath, filter, importBtn, moduleSingle, showCreateBtn] = useModuleHeader();
     const queryClient = useQueryClient();
     const { id } = useParams();
 
     const [fields, setFields] = useState(quickFields);
 
-    const { data: agents } = useAgents(queryClient);
+    const { data: agents } = useAgents();
 
 
     const [task, setTask] = useState<Task>({
@@ -38,8 +41,8 @@ export const QuickTask = () => {
         relation: parseInt(id!)
     } as Task);
 
-    const { data } = useSingleLead();
-    const lead = data as Lead;
+    const { data } = useGetSingle({});
+
 
     const { data: taxonomies } = useTaxonomies('task');
 
@@ -79,7 +82,7 @@ export const QuickTask = () => {
         }
 
         setFields(newFields);
-        setTask({ ...task, assigned_to: lead.assigned_to });
+        setTask({ ...task, assigned_to: data.assigned_to });
 
         return () => { }
     }, [taxonomies]);

@@ -13,8 +13,7 @@ import { useHandleItemDeletion } from '../../hooks/useHandleItemDeletion';
 import { CiEdit } from 'react-icons/ci';
 import { useTaxonomies } from '../../hooks/useTaxonomies';
 import { useEventMutation } from '../../hooks/useEventMutation';
-import { useSingleLead } from '../../hooks/useSingleLead';
-import { useQuery } from '@tanstack/react-query';
+
 
 const key = 'Activities';
 type ReadOnlyFieldWithActivities = {

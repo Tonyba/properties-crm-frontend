@@ -14,8 +14,8 @@ import type { AddSelectsResponse, Lead, SelectOption } from "../../helpers/types
 import { searchPropertyById, searchPropertyByName } from "../../hooks/searchPropertyByName";
 import { SaveBottomBar } from "../../components/SaveBottomBar";
 import { create_lead, edit_lead } from "../../api/leads";
-import { useNavigate, useParams } from "react-router";
-import { useSingleLead, useSingleLeadSuspense } from "../../hooks/useSingleLead";
+import { useNavigate } from "react-router";
+import { useSingleLeadSuspense } from "../../hooks/useSingleLead";
 import { formatData } from "../../helpers/helpers";
 
 const defaultLead = {} as Lead;
@@ -25,7 +25,6 @@ const isEditing = window.location.href.includes('edit');
 export default function LeadAdd() {
 
     const queryClient = useQueryClient();
-    const params = useParams();
     const { data: lead } = useSuspenseQuery(useSingleLeadSuspense(true));
     const initLead = lead as Lead;
 
@@ -172,7 +171,6 @@ export default function LeadAdd() {
 
                     </div>
                 ))}
-
             </form>
 
             <SaveBottomBar isLoading={status == 'pending'} onSubmit={handleSave} />

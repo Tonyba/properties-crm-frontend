@@ -1,12 +1,8 @@
 import { IoChevronDown } from "react-icons/io5"
 
-import { FaPlus } from "react-icons/fa"
-import { FaCaretDown } from "react-icons/fa6"
 
 import { SummaryBoxData } from "./SummaryBoxData"
 import { SingleBoxContainer, SingleBoxTitle } from "../SingleDetailBox"
-import { Dropdown } from "../Dropdown"
-import { FilterButton } from "../FilterButton"
 import { SummaryActions } from "./SummaryActions"
 import type { SummaryBoxAction } from "../../helpers/types"
 

@@ -218,6 +218,131 @@ export const leadFields: InputItem[] = [
     },
 ]
 
+export const contactFilterFields: InputItem[] = [
+    {
+        key: 'first_name',
+        label: 'first name',
+        type: 'text'
+    },
+    {
+        key: 'last_name',
+        label: 'last name',
+        type: 'text'
+    },
+    {
+        key: 'email',
+        label: 'Email',
+        type: 'email'
+    },
+    {
+        key: 'office_phone',
+        label: 'Office Phone',
+        type: 'tel'
+    },
+    {
+        key: 'assigned_to',
+        label: 'Assigned To',
+        type: 'select',
+        required: true
+    },
+];
+
+export const fullContactFields: InputItem[] = [
+    {
+        key: 'first_name',
+        label: 'first name',
+        type: 'text'
+    },
+    {
+        key: 'last_name',
+        label: 'last name',
+        type: 'text'
+    },
+    {
+        key: 'office_phone',
+        label: 'office phone',
+        type: 'tel'
+    },
+    {
+        key: 'mobile',
+        label: 'mobile',
+        type: 'tel'
+    },
+    {
+        key: 'lead_source',
+        label: 'Lead Source',
+        type: 'select',
+        isClearable: false
+    },
+    {
+        key: 'birthdate',
+        label: 'Birthday',
+        type: 'datetimepicker'
+    },
+    {
+        key: 'email',
+        label: 'Email',
+        type: 'email'
+    },
+    {
+        key: 'secondary_email',
+        label: 'Secondary Email',
+        type: 'email'
+    },
+    {
+        key: 'email_opt_out',
+        label: 'Email Opt Out',
+        type: 'checkbox'
+    },
+    {
+        key: 'not_call',
+        label: 'Do Not Call',
+        type: 'checkbox'
+    },
+    {
+        key: 'assigned_to',
+        label: 'Assigned To',
+        type: 'select',
+        required: true,
+        isClearable: false
+    },
+    {
+        key: 'mailing_street',
+        label: 'Mailing Street 	',
+        type: 'text'
+    },
+    {
+        key: 'mailing_city',
+        label: 'Mailing City',
+        type: 'text'
+    },
+    {
+        key: 'mailing_state',
+        label: 'Mailing State',
+        type: 'text'
+    },
+    {
+        key: 'mailing_country',
+        label: 'Mailing Country',
+        type: 'text'
+    },
+    {
+        key: 'mailing_zip',
+        label: 'Mailing ZIP',
+        type: 'text'
+    },
+    {
+        key: 'mailing_po',
+        label: 'Mailing Po Box',
+        type: 'text'
+    },
+    {
+        key: 'description',
+        label: 'Description Details',
+        type: 'textarea'
+    }
+]
+
 export const fullLeadFields: InputItem[] = [
     ...leadFields,
     {

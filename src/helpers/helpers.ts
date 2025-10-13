@@ -84,40 +84,45 @@ export const invalidateSingle = async (key: string, id: string | number, moduleS
 
 export const handleItemDeletion = async (
     id: number,
-    relationId: string,
+    relationId: string | undefined,
     queryClient: QueryClient,
     key: string,
     moduleSingle?: string
-) => {
-    withReactContent(Swal).fire({
-        title: 'Are you sure that you want to delete?',
-        showCancelButton: true,
-        showConfirmButton: true,
-        confirmButtonText: 'Yes',
-        cancelButtonText: 'No',
-        showLoaderOnConfirm: true,
-        allowOutsideClick: () => !Swal.isLoading(),
-        preConfirm: async () => {
-            try {
-                if (relationId) {
-                    await trashItem(id, relationId);
-                    await invalidateSingle(key, relationId, moduleSingle ?? 'module', queryClient);
+): Promise<any> => {
+
+    return new Promise((resolve, reject) => {
+        withReactContent(Swal).fire({
+            title: 'Are you sure that you want to delete?',
+            showCancelButton: true,
+            showConfirmButton: true,
+            confirmButtonText: 'Yes',
+            cancelButtonText: 'No',
+            showLoaderOnConfirm: true,
+            allowOutsideClick: () => !Swal.isLoading(),
+            preConfirm: async () => {
+                try {
+                    if (relationId) {
+                        await trashItem(id, relationId);
+                        await invalidateSingle(key, relationId, moduleSingle ?? 'module', queryClient);
+                    }
+                } catch (error) {
+                    Swal.showValidationMessage(`Request failed: ${error}`);
+                    reject(error);
                 }
-            } catch (error) {
-                Swal.showValidationMessage(`
-                            Request failed: ${error}
-                        `);
             }
-        }
-    }).then((result) => {
-        if (result.isConfirmed) {
-            Swal.fire('Deleted!', '', 'success');
-        }
-    });
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire('Deleted!', '', 'success');
+                resolve(result);
+            }
+        });
+    })
+
+
 
 }
 
-export const trashItem = async (item: number, relation: string) => axios.post<GenericResponse>(`${API_URL}?action=trash_item`, new URLSearchParams({ id: item.toString(), relation: relation.toString() }));
+export const trashItem = async (item: number, relation?: string) => axios.post<GenericResponse>(`${API_URL}?action=trash_item`, new URLSearchParams({ id: item.toString(), relation: relation?.toString() ?? '' }));
 
 export const escapeHtml = (unsafe: string) => {
     return unsafe.replace(/&amp;/g, "&");

@@ -1,4 +1,4 @@
-import { QueryClient, useQuery } from "@tanstack/react-query";
+import { QueryClient, useQuery, useQueryClient } from "@tanstack/react-query";
 import { get_agents } from "../api/leads";
 
 import { type Agent } from '../helpers/types';
@@ -7,7 +7,8 @@ const getFromCache = (queryClient: QueryClient) => {
     return queryClient.getQueryData<Agent[]>(['agents']);
 };
 
-export const useAgents = (queryClient: QueryClient) => {
+export const useAgents = () => {
+    const queryClient = useQueryClient();
 
     return useQuery({
         queryKey: ['agents'],

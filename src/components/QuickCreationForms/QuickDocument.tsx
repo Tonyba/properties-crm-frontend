@@ -4,34 +4,35 @@ import { Input, TextArea } from "../InputForm";
 
 import Select from 'react-select';
 import { useAgents } from "../../hooks/useAgents";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import type { SelectOption, Document, Lead } from "../../helpers/types";
+import { useQueryClient } from "@tanstack/react-query";
+import type { SelectOption, Document } from "../../helpers/types";
 import { useParams } from "react-router";
 import { useDropzone } from 'react-dropzone'
 import { bytesToMegabytes, checkValidFiles, megabytesToBytes, removeFileExtFromFilename } from "../../helpers/helpers";
 import { SaveBottomBar } from "../SaveBottomBar";
 import { useDocMutation } from "../../hooks/useDocMutation";
-import { useSingleLead } from "../../hooks/useSingleLead";
 import { useOffcanvas, useOffcanvasMutation } from "../../hooks/useOffcanvas";
 import { QuickForm } from "../QuickForm";
 import { useTaxonomies } from "../../hooks/useTaxonomies";
+import { useGetSingle } from "../../hooks/useGetSingle";
+import { useModuleHeader } from "../../hooks/useModuleHeader";
 
 const defaultDocument = {} as Document;
 
 const QuickDocument = () => {
 
+    const [createPath, filter, importBtn, moduleSingle, showCreateBtn] = useModuleHeader();
     const queryClient = useQueryClient();
     const params = useParams();
 
-
     const maxMb = 5;
 
-    const { data } = useSingleLead();
-    const lead = data as Lead;
+    const { data } = useGetSingle({});
+
 
     const [fields, setFields] = useState(DocumentUploadFormFields);
-    const [document, setDocument] = useState<Document>({ ...defaultDocument, relation: parseInt(params.id!), assigned_to: lead?.assigned_to });
-    const { data: agents } = useAgents(queryClient);
+    const [document, setDocument] = useState<Document>({ ...defaultDocument, relation: parseInt(params.id!), assigned_to: data?.assigned_to });
+    const { data: agents } = useAgents();
     const { data: doc_taxonomies } = useTaxonomies('document');
 
 
@@ -72,14 +73,13 @@ const QuickDocument = () => {
         mutateOffcanvas({ queryClient, offCanvasOpts: { ...offcanvasOpts, open: false } })
     }
 
+
     useEffect(() => {
         let newFields = [...fields];
         const assigned_index = newFields.findIndex(field => field.key == 'assigned_to');
 
-
         if (assigned_index != -1) {
             newFields[assigned_index].options = agents?.map((agent) => ({ label: agent.name, value: agent.id.toString() }));
-
         }
 
         if (offcanvasOpts?.customOpts?.external) {
@@ -116,7 +116,6 @@ const QuickDocument = () => {
         return () => { }
 
     }, [doc_taxonomies, offcanvasOpts?.customOpts?.external]);
-
 
 
     return (

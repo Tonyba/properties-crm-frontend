@@ -3,6 +3,7 @@ import { useLocation, useParams, type Params } from 'react-router'
 import { routesFn } from '../routes';
 import type { ModuleHeaderPropsType, RouterItem } from '../helpers/types';
 
+
 type useModuleHeaderType = [
     createPath?: string,
     filter?: boolean,
@@ -65,6 +66,8 @@ function findPathProps(pathKey: string, params: Readonly<Params<string>>) {
 }
 
 function findCreatePath(children: RouterItem[]) {
-    const createPath = children.find((child) => child.headerProps?.isCreate)
+    const location = useLocation();
+    const moduleExt = location.pathname.split('/')[2] || '';
+    const createPath = children.find((child) => child.path?.includes(moduleExt) && child.headerProps?.isCreate);
     return createPath;
 }

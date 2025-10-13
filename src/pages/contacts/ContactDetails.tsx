@@ -3,37 +3,36 @@ import { Link, NavLink, Outlet } from "react-router";
 import { ModuleContentWrapper } from "../../components/wrappers";
 import { FaAddressCard } from "react-icons/fa";
 import { iconSize } from "../../helpers/constants";
-import { FaWhatsapp } from "react-icons/fa";
 
-import { useSingleLeadSuspense } from "../../hooks/useSingleLead";
-import type { Lead, SingleModuleMoreBtnActionType } from "../../helpers/types";
+import type { Contact, SingleModuleMoreBtnActionType } from "../../helpers/types";
 import { FilterButton } from "../../components/FilterButton";
-import { WhatsappBtn } from "../../components/WhatsappBtn";
-import { LeadOptions } from "../../helpers/menus";
+import { ContactOptions } from "../../helpers/menus";
 import { SingleModuleMoreBtn } from "../../components/SingleModuleMoreBtn";
 import { useModuleHeader } from "../../hooks/useModuleHeader";
 import { useNavigate } from 'react-router';
 import { useHandleItemDeletion } from "../../hooks/useHandleItemDeletion";
+import { useGetSingleSuspense } from "../../hooks/useGetSingle";
+import { get_contact } from "../../api/contacts";
 
 
-export default function LeadDetails() {
+export default function ContactDetails() {
 
-    const { data: lead } = useSuspenseQuery(useSingleLeadSuspense(true));
+    const { data: contact } = useSuspenseQuery(useGetSingleSuspense(get_contact, true));
     const [createPath, filter, importBtn, moduleSingle, showCreateBtn] = useModuleHeader();
     const navigate = useNavigate();
 
-    const { deleteFn } = useHandleItemDeletion(moduleSingle ?? 'lead');
+    const { deleteFn } = useHandleItemDeletion(moduleSingle ?? 'Contact');
 
-    const singleLead = lead as Lead;
-    const menu = LeadOptions(singleLead.id);
+    const singleContact = contact as Contact;
+    const menu = ContactOptions(parseInt(singleContact?.id?.toString() ?? 0));
 
-    const leadMoreActions: SingleModuleMoreBtnActionType[] = [
+    const ContactMoreActions: SingleModuleMoreBtnActionType[] = [
         {
             fn: async () => {
-                const resp = await deleteFn(singleLead.id);
-                if (resp?.isConfirmed) navigate('/marketing');
+                const resp = await deleteFn(parseInt(singleContact.id.toString()));
+                if (resp?.isConfirmed) navigate('/marketing/contacts');
             },
-            label: 'Delete Lead',
+            label: 'Delete Contact',
         },
         {
             fn: () => { },
@@ -68,26 +67,20 @@ export default function LeadDetails() {
                     </div>
 
                     <div>
-                        <div className="mb-5" >{singleLead.first_name} {singleLead.last_name}</div>
+                        <div className="mb-5" >{singleContact.first_name} {singleContact.last_name}</div>
 
                         <div className="text-gray-400 text-xs">Email</div>
-                        <a className='text-xs' href={`mailto:${singleLead.email}`} >{singleLead.email}</a>
+                        <a className='text-xs' href={`mailto:${singleContact.email}`} >{singleContact.email}</a>
                     </div>
 
                 </div>
 
                 <div className="flex gap-1">
-                    <FilterButton> <Link to={`/marketing/leads/${singleLead.id}/edit`}>Edit</Link></FilterButton>
+                    <FilterButton> <Link to={`/marketing/contacts/${singleContact.id}/edit`}>Edit</Link></FilterButton>
                     <FilterButton>Send Email</FilterButton>
-                    <FilterButton>Convert Lead</FilterButton>
+                    <FilterButton>Convert Contact</FilterButton>
 
-                    <SingleModuleMoreBtn actions={leadMoreActions} />
-
-                    {singleLead.phone
-                        && <WhatsappBtn href={`https://api.whatsapp.com/send/?phone=${singleLead.phone}`} target="_blank">
-                            <FaWhatsapp size={iconSize + 5} color="white" />
-                        </WhatsappBtn>
-                    }
+                    <SingleModuleMoreBtn actions={ContactMoreActions} />
 
                 </div>
             </div>

@@ -48,7 +48,7 @@ const LeadDocuments = () => {
     const { data: docs, isPending } = useDocumentsList<Document>(request);
 
 
-    const { data: agents } = useAgents(queryClient);
+    const { data: agents } = useAgents();
     const [firstTime, setFirstTime] = useState(true);
 
 
