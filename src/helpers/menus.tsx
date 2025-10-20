@@ -37,7 +37,7 @@ const megaMenuItems = [
                 icon: <MdOutlineHouse size={iconSize} />,
             },
             {
-                path: '/sales/opportunities',
+                path: '/sales',
                 label: 'Opportunities',
                 icon: <MdOutlineAttachMoney size={iconSize} />,
                 separator: true
@@ -79,12 +79,12 @@ const megaMenuItems = [
         color: '#3cb979',
         subItems: [
             {
-                path: '/sales/opportunities',
+                path: '/sales',
                 label: 'Oportunities',
                 icon: <MdOutlineAttachMoney size={iconSize} />,
             },
             {
-                path: '/objetives',
+                path: '/sales/objetives',
                 label: 'Objectives',
                 icon: <GiFlagObjective size={iconSize} />,
             }

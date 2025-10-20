@@ -1,17 +1,20 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { useAgents } from "../../hooks/useAgents";
+import { useAgents } from "../hooks/useAgents";
 import { useEffect, useState } from "react";
 
 import DataTable from 'react-data-table-component';
-import TableFilters from "../../ui/table_filters/TableFilters";
+import TableFilters from "../ui/table_filters/TableFilters";
 
-import type { Document, InputItem } from "../../helpers/types";
-import { DocumentUploadFormFields } from "../../helpers/constants";
-import { useDocumentsList } from "../../hooks/useDocumentsList";
-import { escapeHtml } from "../../helpers/helpers";
-import { DocumentsActions } from "../../components/tableActions/DocumentsActions";
+import type { Document, InputItem } from "../helpers/types";
+import { DocumentUploadFormFields } from "../helpers/constants";
+import { useDocumentsList } from "../hooks/useDocumentsList";
+import { escapeHtml } from "../helpers/helpers";
+import { DocumentsActions } from "../components/tableActions/DocumentsActions";
 import { useParams } from "react-router";
-import { useModuleHeader } from "../../hooks/useModuleHeader";
+import { useModuleHeader } from "../hooks/useModuleHeader";
+import { SummaryActions } from "../components/SummaryBoxComponents/SummaryActions";
+import { FaExternalLinkAlt, FaFileExport } from "react-icons/fa";
+import { useOffcanvas, useOffcanvasMutation } from "../hooks/useOffcanvas";
 
 
 const documentFields = DocumentUploadFormFields.map(field => {
@@ -30,7 +33,7 @@ const dataCols = documentFields.map(col => ({
     selector: (row: Document) => row[col.key as keyof Document] ?? '' as any
 }))
 
-const LeadDocuments = () => {
+const DocumentsTab = () => {
 
     const queryClient = useQueryClient();
     const [createPath, filter, importBtn, moduleSingle, showCreateBtn] = useModuleHeader();
@@ -47,6 +50,8 @@ const LeadDocuments = () => {
 
     const { data: docs, isPending } = useDocumentsList<Document>(request);
 
+    const { mutate: mutateOffcanvas } = useOffcanvasMutation({ queryClient });
+    const { data: offcanvasOpts } = useOffcanvas({ queryClient });
 
     const { data: agents } = useAgents();
     const [firstTime, setFirstTime] = useState(true);
@@ -80,6 +85,47 @@ const LeadDocuments = () => {
         // ${row.id}/details`);
     }
 
+    const docsOpts = [
+        {
+            label: 'From File Url',
+            icon: <FaExternalLinkAlt />,
+            optFn: () => {
+                mutateOffcanvas({
+                    queryClient,
+                    offCanvasOpts: {
+                        ...offcanvasOpts,
+                        title: 'New Document',
+                        template: 'document',
+                        size: 'xl',
+                        customOpts: {
+                            ...offcanvasOpts?.customOpts,
+                            external: true
+                        }
+                    }
+                });
+            },
+        },
+        {
+            label: 'File Upload',
+            icon: <FaFileExport />,
+            optFn: () => {
+                mutateOffcanvas({
+                    queryClient,
+                    offCanvasOpts: {
+                        ...offcanvasOpts,
+                        title: 'Upload Document',
+                        template: 'document',
+                        size: 'xl',
+                        customOpts: {
+                            ...offcanvasOpts?.customOpts,
+                            external: false
+                        }
+                    }
+                });
+            }
+        }
+    ];
+
     useEffect(() => {
 
         const newFields = [...fields];
@@ -102,7 +148,20 @@ const LeadDocuments = () => {
 
     return (
         <>
+
+            <div className="[&>*>*]:ml-0 mb-3">
+                <SummaryActions summaryActions={[
+                    {
+                        action: 'Documents',
+                        isWithSelect: true,
+                        options: docsOpts
+                    }
+                ]} />
+            </div>
+
             <TableFilters searchFn={handleSearch} filters={fields} />
+
+
 
             <DataTable
                 columns={[{
@@ -128,4 +187,4 @@ const LeadDocuments = () => {
     )
 }
 
-export default LeadDocuments
+export default DocumentsTab

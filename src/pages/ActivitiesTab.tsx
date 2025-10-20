@@ -1,14 +1,17 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { useAgents } from "../../hooks/useAgents";
+import { useAgents } from "../hooks/useAgents";
 import { useEffect, useState } from "react";
-import { EventFormFields } from "../../helpers/constants";
-import { useActivitiesList } from "../../hooks/useActivitiesList";
+import { EventFormFields } from "../helpers/constants";
+import { useActivitiesList } from "../hooks/useActivitiesList";
 import { useNavigate, useParams } from "react-router";
 import DataTable from 'react-data-table-component';
-import TableFilters from "../../ui/table_filters/TableFilters";
-import { useTaxonomies } from "../../hooks/useTaxonomies";
-import type { Event, InputItem } from "../../helpers/types";
-import { ActivitiesAction } from "../../components/tableActions/ActivitiesAction";
+import TableFilters from "../ui/table_filters/TableFilters";
+import { useTaxonomies } from "../hooks/useTaxonomies";
+import type { Event, InputItem } from "../helpers/types";
+import { ActivitiesAction } from "../components/tableActions/ActivitiesAction";
+import { useModuleHeader } from "../hooks/useModuleHeader";
+import { SummaryActions } from "../components/SummaryBoxComponents/SummaryActions";
+import { useOffcanvas, useOffcanvasMutation } from "../hooks/useOffcanvas";
 
 const eventFields = EventFormFields.map(field => {
 
@@ -27,10 +30,36 @@ const dataCols = eventFields.map(col => ({
     selector: (row: Event) => row[col.key as keyof Event] ?? '' as any
 }))
 
-const LeadActivities = () => {
+const ActivitiesTab = () => {
+
+    const [createPath, filter, importBtn, moduleSingle, showCreateBtn] = useModuleHeader();
 
     const queryClient = useQueryClient();
     const navigate = useNavigate();
+    const { mutate: mutateOffcanvas } = useOffcanvasMutation({ queryClient });
+
+    const { data: offcanvasOpts } = useOffcanvas({ queryClient });
+
+    const [actions] = useState([
+        {
+            action: 'Task',
+            action_fn: () => {
+                mutateOffcanvas({
+                    queryClient,
+                    offCanvasOpts: { ...offcanvasOpts, title: 'Quick Create Task', template: 'task', size: 'xl' }
+                });
+            }
+        },
+        {
+            action: 'Event',
+            action_fn: () => {
+                mutateOffcanvas({
+                    queryClient,
+                    offCanvasOpts: { ...offcanvasOpts, title: 'Quick Create Event', template: 'event', size: 'xl' }
+                });
+            }
+        }
+    ]);
 
     const [fields, setFields] = useState(eventFields);
 
@@ -47,7 +76,7 @@ const LeadActivities = () => {
         filters: {} as Event
     });
 
-    const { data: activities, isPending } = useActivitiesList<Event>(request);
+    const { data: activities, isLoading } = useActivitiesList<Event>(request);
 
     const handlePaginationChange = (page: number) => {
         setRequest({ ...request, page });
@@ -64,6 +93,7 @@ const LeadActivities = () => {
     }
 
     const handleSearch = (filtersValues: InputItem[]) => {
+
         let newFilters: any = {};
 
         filtersValues.map(filter => {
@@ -78,11 +108,19 @@ const LeadActivities = () => {
             newFilters['selected_types'] = 'task';
         }
 
+        console.log(newFilters)
+
         setRequest({ ...request, page: 1, filters: newFilters });
     }
 
     useEffect(() => {
+        const invalidate = async () => {
+            if (activities) await queryClient.invalidateQueries({ queryKey: [`${moduleSingle}/detail/${id}/list`] });
+        };
+        invalidate();
+    }, []);
 
+    useEffect(() => {
         const newFields = [...fields];
         const assigned_index = newFields.findIndex(field => field.key == 'assigned_to');
         const event_type_index = newFields.findIndex(field => field.key == 'event_type');
@@ -106,20 +144,29 @@ const LeadActivities = () => {
             if (!found) newFields[event_type_index].options?.push({ label: 'Task', value: 'task' });
         }
 
-        const invalidate = async () => {
-            await queryClient.invalidateQueries({ queryKey: [`leads/${id}/detail/list`] });
-        };
-        if (!firstTime) invalidate();
-
-
         setFields(newFields);
 
         return () => { }
 
-    }, [request.perPage, JSON.stringify(request.filters), taxonomies, agents]);
+    }, [taxonomies, agents]);
+
+    useEffect(() => {
+
+        const invalidate = async () => {
+            await queryClient.invalidateQueries({ queryKey: [`${moduleSingle}/detail/${id}/list`] });
+        };
+        if (!firstTime) invalidate();
+
+        return () => { }
+
+    }, [request.perPage, JSON.stringify(request.filters)]);
 
     return (
         <>
+            <div className="[&>*>*]:ml-0 mb-3">
+                <SummaryActions summaryActions={actions ?? []} />
+            </div>
+
             <TableFilters searchFn={handleSearch} filters={fields} />
 
             <DataTable
@@ -127,7 +174,7 @@ const LeadActivities = () => {
                     name: 'Actions',
                     cell: (row: any) => (<ActivitiesAction item={row} />),
                 }, ...dataCols]}
-                progressPending={isPending}
+                progressPending={isLoading}
                 responsive
                 highlightOnHover
                 pointerOnHover
@@ -145,4 +192,4 @@ const LeadActivities = () => {
     )
 }
 
-export default LeadActivities
+export default ActivitiesTab

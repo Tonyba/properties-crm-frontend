@@ -59,19 +59,23 @@ const QuickDocument = () => {
 
     const { mutate, status } = useDocMutation(queryClient);
 
+    const { mutate: mutateOffcanvas } = useOffcanvasMutation({ queryClient });
+    const handleCancel = () => {
+        mutateOffcanvas({ queryClient, offCanvasOpts: { ...offcanvasOpts, open: false } })
+    }
+
     const handleSave = () => {
         mutate({
             doc: document,
             file: files
         });
+
+        handleCancel();
     }
 
     const { data: offcanvasOpts } = useOffcanvas({ queryClient });
-    const { mutate: mutateOffcanvas } = useOffcanvasMutation({ queryClient });
 
-    const handleCancel = () => {
-        mutateOffcanvas({ queryClient, offCanvasOpts: { ...offcanvasOpts, open: false } })
-    }
+
 
 
     useEffect(() => {

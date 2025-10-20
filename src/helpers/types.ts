@@ -189,7 +189,7 @@ export type IsNever<T> = [T] extends [never] ? true : false;
 export type InputItem = {
     label?: string;
     key: string;
-    type: 'text' | 'datetimepicker' | 'select' | 'number' | 'checkbox' | 'radio' | 'textarea' | 'tel' | 'email' | 'upload' | 'hidden';
+    type: 'text' | 'datetimepicker' | 'section' | 'select' | 'number' | 'checkbox' | 'radio' | 'textarea' | 'tel' | 'email' | 'upload' | 'hidden';
     value?: string | string[];
     required?: boolean;
     isMultiSelect?: boolean;
@@ -200,6 +200,8 @@ export type InputItem = {
     quickField?: boolean;
     isRelationField?: boolean;
     isFilterField?: boolean;
+    children?: InputItem[];
+    isAsyncSelect?: boolean;
 }
 
 export type SelectOption = {
@@ -245,4 +247,22 @@ export type Contact = {
     mailing_country?: string;
     mailing_zip?: string
     description?: string
+}
+
+export type Opportunity = {
+    id: string | number;
+    title: string;
+    contact: number | string;
+    assigned_to: number | string;
+    lead_source: number | string;
+    lead_status: number | string;
+    close_date: string;
+    description?: string;
+    country?: string;
+    state?: string;
+    city?: string;
+}
+
+export type QuickOffCanvasProps = {
+    handleClose: () => void;
 }

@@ -39,6 +39,7 @@ export const DrowpdownContent = tw.div`
     transition-[opacity,transform,visibility]
     duration-150
     ease-in-out
+    z-1
     ${({ $className }: DrowpdownContentProps) => $className || ''}
     ${({ $withAnimation, $open }: DrowpdownContentProps) => ($withAnimation && !$open) ? 'opacity-0 invisible -translate-y-[5%]' : 'translate-y-0 opacity-100 visible'}
 `;

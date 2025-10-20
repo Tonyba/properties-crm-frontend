@@ -19,7 +19,7 @@ export const ModuleSidebarMenu = ({ color, items, title, basePath, baseIcon }: p
   return (
     <div className="bg-neutral-800 h-full">
       <h1 style={{ backgroundColor: color }}>
-        <Link className="uppercase flex gap-3 items-center text-white px-6 py-3 justify-center" to={basePath}>{baseIcon} {title}</Link>
+        <Link className="uppercase flex gap-3 items-center text-white px-6 py-3 " to={basePath}>{baseIcon} {title}</Link>
       </h1>
       <div className="uppercase text-[13px]">
         {items.map((item) => {
