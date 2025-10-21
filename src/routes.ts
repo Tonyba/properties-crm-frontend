@@ -9,7 +9,7 @@ import { type QueryClient } from "@tanstack/react-query";
 import type { RouterItem } from "./helpers/types";
 import { leadAddLoader } from "./loaders/leadLoader";
 import { leadDetailsLoader } from "./loaders/singleLeadLoader";
-import { singleLoader } from "./loaders/SingleLoader";
+import { singleLoader } from "./loaders/singleLoader";
 import { get_contact } from "./api/contacts";
 import AddContact from "./pages/contacts/ContactAdd";
 
@@ -38,7 +38,6 @@ const ContactList = loadable(() => import('./pages/contacts/ContactList'));
 const ContactAdd = loadable(() => import('./pages/contacts/ContactAdd'));
 const ContactSummary = loadable(() => import('./pages/contacts/ContactSummary'));
 const ContactData = loadable(() => import('./pages/contacts/ContactData'));
-const ContactUpdates = loadable(() => import('./pages/contacts/ContactUpdates'));
 const ContactActivities = loadable(() => import('./pages/contacts/ContactActivities'));
 const ContactEmails = loadable(() => import('./pages/contacts/ContactEmails'));
 const ContactDocuments = loadable(() => import('./pages/contacts/ContactDocuments'));

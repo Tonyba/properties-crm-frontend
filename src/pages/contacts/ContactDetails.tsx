@@ -78,7 +78,6 @@ export default function ContactDetails() {
                 <div className="flex gap-1">
                     <FilterButton> <Link to={`/marketing/contacts/${singleContact.id}/edit`}>Edit</Link></FilterButton>
                     <FilterButton>Send Email</FilterButton>
-                    <FilterButton>Convert Contact</FilterButton>
 
                     <SingleModuleMoreBtn actions={ContactMoreActions} />
 
