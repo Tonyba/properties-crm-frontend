@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState, type ChangeEvent } from "react";
 import { useParams } from "react-router"
 
@@ -11,9 +11,8 @@ import { useOffcanvas, useOffcanvasMutation } from "../../hooks/useOffcanvas";
 import { SaveBottomBar } from "../SaveBottomBar";
 
 
-import type { Lead, SelectOption, Task } from "../../helpers/types";
+import type { SelectOption, Task } from "../../helpers/types";
 import { QuickForm } from "../QuickForm";
-import { useSingleLead } from "../../hooks/useSingleLead";
 import { Input, TextArea } from "../InputForm";
 import { useAgents } from "../../hooks/useAgents";
 import { useTaxonomies } from "../../hooks/useTaxonomies";
@@ -24,7 +23,7 @@ import { useGetSingle } from "../../hooks/useGetSingle";
 
 const quickFields = TaskFormFields.filter(field => field.quickField);
 
-export const QuickTask = () => {
+const QuickTask = () => {
 
     const [createPath, filter, importBtn, moduleSingle, showCreateBtn] = useModuleHeader();
     const queryClient = useQueryClient();
@@ -61,6 +60,7 @@ export const QuickTask = () => {
         dataToSave.from = moment(task.from).format(DateFormat);
         dataToSave.to = moment(task.to).format(DateFormat);
         mutate(dataToSave);
+        handleCancel();
     }
 
     useEffect(() => {
@@ -161,3 +161,5 @@ export const QuickTask = () => {
 
     )
 }
+
+export default QuickTask;

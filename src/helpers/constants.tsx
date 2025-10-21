@@ -343,6 +343,74 @@ export const fullContactFields: InputItem[] = [
     }
 ]
 
+export const fullOpportunityFields: InputItem[] = [
+    {
+        key: 'title',
+        label: 'Potential Name',
+        type: 'text',
+        required: true,
+    },
+    {
+        key: 'contact',
+        label: 'Contact',
+        placeholder: 'Search a Contact',
+        type: 'select',
+        required: true,
+        isClearable: false,
+        isAsyncSelect: true
+    },
+    {
+        key: 'assigned_to',
+        label: 'Assigned To',
+        type: 'select',
+        required: true,
+        isClearable: false
+    },
+    {
+        key: 'lead_source',
+        label: 'Lead Source',
+        type: 'select',
+    },
+    {
+        key: 'lead_status',
+        label: 'Lead Status',
+        type: 'select',
+        required: true,
+    },
+    {
+        key: 'close_date',
+        label: 'Expected Close Date',
+        type: 'datetimepicker'
+    },
+    {
+        key: 'description',
+        label: 'Description Details',
+        type: 'textarea'
+    },
+    {
+        key: 'location',
+        label: 'Location',
+        type: 'section',
+        children: [
+            {
+                type: 'select',
+                key: 'country',
+                label: 'Country'
+            },
+            {
+                type: 'select',
+                key: 'state',
+                label: 'State'
+            },
+            {
+                key: 'city',
+                label: 'City',
+                type: 'select'
+            }
+        ]
+    }
+];
+
 export const fullLeadFields: InputItem[] = [
     ...leadFields,
     {

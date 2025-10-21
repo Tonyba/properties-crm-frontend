@@ -12,8 +12,6 @@ import { useMutateSingle } from "../../hooks/useMutateSingle";
 import { create_contact, edit_contact } from "../../api/contacts";
 import { useAgents } from "../../hooks/useAgents";
 import { useTaxonomies } from "../../hooks/useTaxonomies";
-import moment from "moment";
-
 
 const ContactData = () => {
 

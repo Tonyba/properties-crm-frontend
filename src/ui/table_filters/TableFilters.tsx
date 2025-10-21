@@ -17,7 +17,7 @@ function TableFilters({ filters, searchFn }: props) {
     return (
         <div className="flex [&>*]:w-full  gap-2.5" onKeyDown={(e) => e.key === 'Enter' && searchFn(newFilter)}>
             <div>
-                <button className="px-5 py-1.5 bg-blue-600 text-white rounded-xs text-xs font-medium" onClick={() => searchFn(newFilter)}>Search</button>
+                <button className="px-5 py-1.5 bg-blue-600 text-white rounded-xs text-xs font-medium cursor-pointer" onClick={() => searchFn(newFilter)}>Search</button>
             </div>
 
             {newFilter.map(({ key, value, type, label, options, isMultiSelect }, i) => (

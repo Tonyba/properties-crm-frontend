@@ -18,7 +18,7 @@ import { useModuleHeader } from "../../hooks/useModuleHeader";
 const quickFields = EventFormFields.filter(field => field.quickField);
 const defaultGetSingleFn = (id: string, update?: boolean) => new Promise(() => { });
 
-export const QuickEvent = () => {
+const QuickEvent = () => {
 
     const [createPath, filter, importBtn, moduleSingle, showCreateBtn] = useModuleHeader();
 
@@ -56,6 +56,7 @@ export const QuickEvent = () => {
         dataToSave.from = moment(event.from).format(DateFormat);
         dataToSave.to = moment(event.to).format(DateFormat);
         mutate(dataToSave);
+        handleCancel();
     }
 
     useEffect(() => {
@@ -157,3 +158,5 @@ export const QuickEvent = () => {
 
     )
 }
+
+export default QuickEvent;

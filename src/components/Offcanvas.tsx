@@ -3,10 +3,10 @@ import { useOffcanvas, useOffcanvasMutation } from "../hooks/useOffcanvas"
 import { CloseOffcanvas, OffCanvasBody, OffCanvasContent, OffCanvasHeader, OffcanvasInner } from "./OffcanvasBody"
 import { FaTimes } from "react-icons/fa";
 import loadable from "@loadable/component";
-import { QuickTask } from "./QuickCreationForms/QuickTask";
-import { QuickEvent } from "./QuickCreationForms/QuickEvent";
 
 const QuickCreationForm = loadable(() => import('../components/QuickCreationForms/QuickDocument'));
+const QuickEvent = loadable(() => import('./QuickCreationForms/QuickEvent'));
+const QuickTask = loadable(() => import('./QuickCreationForms/QuickTask'));
 
 export const Offcanvas = () => {
 
