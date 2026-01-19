@@ -15,7 +15,6 @@ import { useModuleHeader } from "../../hooks/useModuleHeader";
 import { useNavigate } from 'react-router';
 import { useHandleItemDeletion } from "../../hooks/useHandleItemDeletion";
 
-
 export default function LeadDetails() {
 
     const { data: lead } = useSuspenseQuery(useSingleLeadSuspense(true));
@@ -58,7 +57,6 @@ export default function LeadDetails() {
 
     return (
         <ModuleContentWrapper>
-
             <div className="flex justify-between items-start mb-5">
 
                 <div className="flex gap-3">

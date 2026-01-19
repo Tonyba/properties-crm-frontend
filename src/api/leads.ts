@@ -1,6 +1,6 @@
 import axios from "axios";
 import { API_URL } from "../helpers/constants";
-import type { AddSelectsResponse, Agent, CreateLeadRequest, GenericResponse, GetLeadsResponse, GetSingleResponse, Lead, ListLeadRequest, SingleLeadResponse } from "../helpers/types";
+import type { AddSelectsResponse, Agent, CreateLeadRequest, GenericResponse, GetLeadsResponse, GetSingleResponse, Lead, ListLeadRequest } from "../helpers/types";
 
 export const get_selects = () => axios.post<AddSelectsResponse>(`${API_URL}?action=lead_select_values`);
 export const get_agents = (agent_name?: string) => axios.post<Agent[]>(`${API_URL}?action=lead_agents`, { agent: agent_name });

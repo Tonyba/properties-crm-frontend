@@ -89,7 +89,7 @@ export const routesFn = (queryClient?: QueryClient) => {
                             label: 'Leads',
                             Component: LeadList,
                             headerProps: {
-                                moduleSingle: 'Lead',
+                                moduleSingle: 'Leads',
                                 importBtn: true,
                                 filter: true,
                                 showCreateBtn: true
@@ -107,7 +107,7 @@ export const routesFn = (queryClient?: QueryClient) => {
                         },
                         {
                             label: 'Lead Details',
-                            path: 'lead/:id/details',
+                            path: 'leads/:id/details',
                             loader: queryClient && leadDetailsLoader(queryClient),
                             Component: LeadDetails,
                             headerProps: {
@@ -262,7 +262,8 @@ export const routesFn = (queryClient?: QueryClient) => {
                                 moduleSingle: 'Opportunity',
                                 importBtn: true,
                                 filter: true,
-                                showCreateBtn: true
+                                showCreateBtn: true,
+                                showViewSwitcher: true
                             }
                         },
                         {

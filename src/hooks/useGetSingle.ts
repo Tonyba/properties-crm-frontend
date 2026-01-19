@@ -3,6 +3,7 @@ import { useParams } from "react-router";
 import { useModuleHeader } from "./useModuleHeader";
 import { get_contact } from "../api/contacts";
 import { get_lead } from "../api/leads";
+import { get_opportunity } from "../api/opportunities";
 
 type UseGetSingleParams = {
     get_fn?: (id: string, updating?: boolean) => Promise<any>,
@@ -11,7 +12,6 @@ type UseGetSingleParams = {
 
 export const useGetSingle = <T>({ get_fn, updating }: UseGetSingleParams) => {
     const { id } = useParams();
-    const queryClient = useQueryClient();
     const [createPath, filter, importBtn, moduleSingle, showCreateBtn] = useModuleHeader();
 
     return useQuery({
@@ -23,12 +23,12 @@ export const useGetSingle = <T>({ get_fn, updating }: UseGetSingleParams) => {
 
             let resp;
 
+
             if (get_fn) {
                 const response = await get_fn(id!, updating ?? false);
                 return response.data.data;
 
             } else {
-
                 switch (moduleSingle) {
                     case 'Contact':
                         resp = await get_contact(id, updating)
@@ -38,12 +38,15 @@ export const useGetSingle = <T>({ get_fn, updating }: UseGetSingleParams) => {
                         resp = await get_lead(id, updating)
                         break;
 
+                    case 'Opportunity':
+                        resp = await get_opportunity(id, updating)
+                        break;
+
                     default:
                         break;
                 }
 
             }
-
             return resp.data.data as T;
         }
     });
@@ -52,13 +55,12 @@ export const useGetSingle = <T>({ get_fn, updating }: UseGetSingleParams) => {
 export const useGetSingleSuspense = (get_fn: (id: string, updating?: boolean) => Promise<any>, updating?: boolean) => {
 
     const { id } = useParams();
-    const queryClient = useQueryClient();
     const [createPath, filter, importBtn, moduleSingle, showCreateBtn] = useModuleHeader();
+
 
     return queryOptions({
         queryKey: [`${moduleSingle}/${id}`],
         queryFn: async () => {
-            console.log(id)
             if (!id) return {};
             // const cache = getFromCache((id), queryClient);
             // if (cache) return cache as Lead;

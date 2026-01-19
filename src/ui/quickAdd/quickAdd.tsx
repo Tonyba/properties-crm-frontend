@@ -38,7 +38,7 @@ type propType = {
 
 export default function QuickAdd(props: propType) {
     return (
-        <div ref={props.ref} className="absolute top-full right-full min-w-xl bg-white shadow-md rounded-sm p-5">
+        <div ref={props.ref} className="absolute top-full right-full min-w-xl bg-white shadow-md rounded-sm p-5 z-10">
             <h3 className="pb-1 border-b mb-4 border-gray-400 font-medium">Quick Add</h3>
             <div className="grid grid-cols-3 gap-5">
                 {items.map(function (item) {

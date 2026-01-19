@@ -3,7 +3,7 @@ import { useAgents } from "../hooks/useAgents";
 import { useEffect, useState } from "react";
 import { EventFormFields } from "../helpers/constants";
 import { useActivitiesList } from "../hooks/useActivitiesList";
-import { useNavigate, useParams } from "react-router";
+import { useParams } from "react-router";
 import DataTable from 'react-data-table-component';
 import TableFilters from "../ui/table_filters/TableFilters";
 import { useTaxonomies } from "../hooks/useTaxonomies";
@@ -21,6 +21,10 @@ const eventFields = EventFormFields.map(field => {
         field.isMultiSelect = true
     }
 
+    if (field.key == 'from' || field.key == 'to') {
+        field.isSingleDate = true;
+    }
+
     return field;
 });
 
@@ -35,7 +39,7 @@ const ActivitiesTab = () => {
     const [createPath, filter, importBtn, moduleSingle, showCreateBtn] = useModuleHeader();
 
     const queryClient = useQueryClient();
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const { mutate: mutateOffcanvas } = useOffcanvasMutation({ queryClient });
 
     const { data: offcanvasOpts } = useOffcanvas({ queryClient });

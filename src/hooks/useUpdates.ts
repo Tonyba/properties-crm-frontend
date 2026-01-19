@@ -1,7 +1,7 @@
 import { QueryClient, useQuery } from "@tanstack/react-query";
 import { getUpdates } from "../api/updates";
 
-export const useUpdates = <T>(id: string, queryClient: QueryClient) => {
+export const useUpdates = (id: string, queryClient: QueryClient) => {
     return useQuery({
         queryKey: [`updates/${id}`],
         queryFn: async () => {

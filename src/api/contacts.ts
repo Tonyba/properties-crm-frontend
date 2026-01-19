@@ -19,4 +19,5 @@ export const contacts_list = <T>(request: ListLeadRequest<T>) => {
         `${API_URL}?action=get_contacts`, params);
 }
 
+//export const get_initials_contacts = (ids: string[]) => axios.post<GenericResponse[] & { data: { label: string, value: string }[] }>(`${API_URL}`, new URLSearchParams({ action: 'get_initials_contacts', ids: JSON.stringify(ids) }));
 export const contact_by_name_or_id = <T>(search_term: string, id?: string) => axios.post<T[]>(`${API_URL}`, new URLSearchParams({ action: 'contact_by_name_or_id', search_term, id: id ?? '' }));

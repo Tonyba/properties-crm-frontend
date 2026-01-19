@@ -3,6 +3,7 @@ import { get_related_documents } from "../api/documents";
 import type { BoxData } from "../helpers/types";
 import { useModuleHeader } from "./useModuleHeader";
 import { get_related_activities } from "../api/events";
+import { get_related_services } from "@/api/opportunities";
 
 
 export const useRelated = <T>(related_id: string, key: string) => {
@@ -23,6 +24,10 @@ export const useRelated = <T>(related_id: string, key: string) => {
 
                 case 'Comments':
                     resp.data = [];
+                    break;
+
+                case 'Related Services':
+                    resp.data = await get_related_services(related_id);
                     break;
 
                 default:

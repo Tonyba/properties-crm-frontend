@@ -31,22 +31,22 @@ const megaMenuItems = [
                 label: 'Dashboard',
                 icon: <PiSquaresFour size={iconSize} />,
             },
-            {
-                path: '/properties',
-                label: 'Properties',
-                icon: <MdOutlineHouse size={iconSize} />,
-            },
+            /* {
+                 path: '/properties',
+                 label: 'Properties',
+                 icon: <MdOutlineHouse size={iconSize} />,
+             },*/
             {
                 path: '/sales',
                 label: 'Opportunities',
                 icon: <MdOutlineAttachMoney size={iconSize} />,
                 separator: true
             },
-            {
-                path: '/document',
-                label: 'Documents',
-                icon: <IoDocumentTextOutline size={iconSize} />,
-            },
+            /* {
+                 path: '/document',
+                 label: 'Documents',
+                 icon: <IoDocumentTextOutline size={iconSize} />,
+             },*/
             {
                 path: '/calendar',
                 label: 'Calendar',
@@ -83,11 +83,11 @@ const megaMenuItems = [
                 label: 'Oportunities',
                 icon: <MdOutlineAttachMoney size={iconSize} />,
             },
-            {
-                path: '/sales/objetives',
-                label: 'Objectives',
-                icon: <GiFlagObjective size={iconSize} />,
-            }
+            /*  {
+                  path: '/sales/objetives',
+                  label: 'Objectives',
+                  icon: <GiFlagObjective size={iconSize} />,
+              }*/
         ]
     }
 ];
@@ -206,9 +206,54 @@ const ContactOptions = (id: number) => {
 
 }
 
+const OpportunityOptions = (id: number) => {
+
+    const baseUrl = '/sales/opportunity';
+
+    return [
+        {
+            path: `${baseUrl}/${id}/details`,
+            label: 'Summary',
+            icon: <GoCreditCard />,
+        },
+        {
+            path: `${baseUrl}/${id}/details/data`,
+            label: 'Details',
+            icon: <CiViewList />,
+        },
+        {
+            path: `${baseUrl}/${id}/details/updates`,
+            label: 'Updates',
+            icon: <LuChartLine />,
+        },
+        {
+            path: `${baseUrl}/${id}/details/activities`,
+            label: 'Activities',
+            icon: <FaRegCalendarAlt />,
+        },
+        // {
+        //     path: `${baseUrl}/${id}/details/contacts`,
+        //     label: 'Contacts',
+        //     icon: <FaRegCalendarAlt />,
+        // },
+        {
+            path: `${baseUrl}/${id}/details/documents`,
+            label: 'Documents',
+            icon: <LuFileSpreadsheet />,
+        },
+        {
+            path: `${baseUrl}/${id}/details/comments`,
+            label: 'Comments',
+            icon: <FaRegComments />
+        },
+    ];
+
+}
+
 export {
     megaMenuItems,
     megaFooterOptions,
     LeadOptions,
-    ContactOptions
+    ContactOptions,
+    OpportunityOptions
 }

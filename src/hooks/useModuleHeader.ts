@@ -9,14 +9,15 @@ type useModuleHeaderType = [
     filter?: boolean,
     importBtn?: boolean,
     moduleSingle?: string,
-    showCreateBtn?: boolean
+    showCreateBtn?: boolean,
+    showViewSwitcher?: boolean
 ];
 
 export const useModuleHeader = (): useModuleHeaderType => {
     const location = useLocation();
     const params = useParams();
-    const { createPath, filter, importBtn, moduleSingle, showCreateBtn } = findPathProps(location.pathname, params);
-    return [createPath, filter, importBtn, moduleSingle, showCreateBtn];
+    const { createPath, filter, importBtn, moduleSingle, showCreateBtn, showViewSwitcher } = findPathProps(location.pathname, params);
+    return [createPath, filter, importBtn, moduleSingle, showCreateBtn, showViewSwitcher];
 }
 
 function findPathProps(pathKey: string, params: Readonly<Params<string>>) {

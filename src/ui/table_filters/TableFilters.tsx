@@ -3,6 +3,9 @@ import { FilterInput } from "../../components/FilterInputs";
 import type { InputItem, SelectOption } from "../../helpers/types";
 
 import Select from 'react-select';
+import { DateRangePicker } from "../../components/application/date-picker/date-range-picker";
+import type { DateValue, RangeValue } from "react-aria";
+import { DatePicker } from "../../components/application/date-picker/date-picker";
 
 
 type props = {
@@ -20,27 +23,35 @@ function TableFilters({ filters, searchFn }: props) {
                 <button className="px-5 py-1.5 bg-blue-600 text-white rounded-xs text-xs font-medium cursor-pointer" onClick={() => searchFn(newFilter)}>Search</button>
             </div>
 
-            {newFilter.map(({ key, value, type, label, options, isMultiSelect }, i) => (
+            {newFilter.map(({ key, value, type, label, options, isMultiSelect, placeholder, isSingleDate }, i) => (
                 <div key={key}>
                     {
-                        type == 'datetimepicker' && <FilterInput
-                            type="date"
-                            name={key + '-filter'}
-                            placeholder={label}
-                            id={key + '-filter'}
-                            value={newFilter[i].value}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                let changed = [...newFilter];
-                                changed[i].value = e.target.value;
-                                setNewFilter(changed);
-                            }}
-                        />
+                        type == 'datetimepicker'
+                        && (isSingleDate
+                            ? <DatePicker
+                                value={newFilter[i].value as DateValue}
+                                className='w-1/2' id={key} aria-label={label}
+                                onChange={(date) => {
+                                    let changed = [...newFilter];
+                                    changed[i].value = date as DateValue;
+                                    setNewFilter(changed);
+                                }}
+                            />
+                            : <DateRangePicker
+                                className='w-1/2' id={key} aria-label="Date picker"
+                                value={newFilter[i].value as RangeValue<DateValue>}
+                                onChange={(date) => {
+                                    let changed = [...newFilter];
+                                    changed[i].value = date as RangeValue<DateValue>;
+                                    setNewFilter(changed);
+                                }} />)
                     }
+
                     {
                         (type != 'select' && type != 'datetimepicker') && <FilterInput
                             type={type}
                             name={key + '-filter'}
-                            placeholder={label}
+                            placeholder={placeholder ? placeholder : label}
                             id={key + '-filter'}
                             value={newFilter[i].value}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {

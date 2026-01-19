@@ -1,6 +1,7 @@
 import { queryOptions, type QueryClient } from "@tanstack/react-query";
 import { type LoaderFunctionArgs } from 'react-router';
 import { get_lead } from "../api/leads";
+import type { GenericResponse, Lead } from "../helpers/types";
 
 export const leadDetailsLoader = (_queryClient: QueryClient) => async ({ params }: LoaderFunctionArgs) => {
     const id = params.id ?? '';
@@ -11,10 +12,8 @@ export const leadDetailsLoader = (_queryClient: QueryClient) => async ({ params 
                 if (!id) return {};
                 // const cache = getFromCache((id), queryClient);
                 // if (cache) return cache as Lead;
-                const response = await get_lead(id, false);
-                if (response.data.ok) {
-                    return response.data.lead;
-                }
+                const response = await get_lead<GenericResponse>(id, false);
+                return response.data.data as Lead;
             }
         })
     );

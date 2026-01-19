@@ -4,7 +4,7 @@ import { useParams } from "react-router"
 
 
 import Select from 'react-select';
-import moment from 'moment';
+
 
 import { DateFormat, TaskFormFields } from "../../helpers/constants";
 import { useOffcanvas, useOffcanvasMutation } from "../../hooks/useOffcanvas";
@@ -21,6 +21,11 @@ import { useModuleHeader } from "../../hooks/useModuleHeader";
 import { useGetSingle } from "../../hooks/useGetSingle";
 
 
+import dayjs from "dayjs";
+import { DateTimePicker } from "@mui/x-date-pickers";
+
+
+
 const quickFields = TaskFormFields.filter(field => field.quickField);
 
 const QuickTask = () => {
@@ -35,8 +40,8 @@ const QuickTask = () => {
 
 
     const [task, setTask] = useState<Task>({
-        from: moment().format(),
-        to: moment().format(),
+        from: dayjs(),
+        to: dayjs(),
         relation: parseInt(id!)
     } as Task);
 
@@ -57,8 +62,8 @@ const QuickTask = () => {
 
     const handleSave = () => {
         const dataToSave = { ...task };
-        dataToSave.from = moment(task.from).format(DateFormat);
-        dataToSave.to = moment(task.to).format(DateFormat);
+        dataToSave.from = dayjs(task.from).format(DateFormat);
+        dataToSave.to = dayjs(task.to).format(DateFormat);
         mutate(dataToSave);
         handleCancel();
     }
@@ -74,7 +79,6 @@ const QuickTask = () => {
 
         if (taxonomies) {
             const taxs = Object.keys(taxonomies);
-            console.log(newFields)
             taxs.map(tax => {
                 const foundIndex = newFields.findIndex(field => field.key == tax);
                 if (newFields[foundIndex]) newFields[foundIndex].options = taxonomies[tax];
@@ -82,10 +86,10 @@ const QuickTask = () => {
         }
 
         setFields(newFields);
-        setTask({ ...task, assigned_to: data.assigned_to });
+        setTask({ ...task, assigned_to: data?.assigned_to });
 
         return () => { }
-    }, [taxonomies]);
+    }, [taxonomies, data, agents]);
 
     return (
         <>
@@ -94,22 +98,18 @@ const QuickTask = () => {
                     <div className={`flex justify-between ${(type == 'textarea' || type == 'upload' || key == 'title') ? 'col-span-2' : ''}`} key={key}>
                         <label className="text-sm" htmlFor={key}> {label} {required && <sup className="text-red-500 text-base translate-y-1.5 ml-1 inline-block">*</sup>}</label>
                         {
-                            type == 'datetimepicker' && <Input
-                                name={key} id={key}
-                                placeholder={placeholder ?? label}
-                                aria-label={label}
-                                className='w-1/2'
-                                value={task?.[key as keyof Task]}
-                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                    const currentVal = e.target.value;
-
+                            type == 'datetimepicker'
+                            &&
+                            <DateTimePicker className='w-1/2'
+                                value={task?.[key as keyof Task] as dayjs.Dayjs}
+                                onChange={(newValue) => {
                                     let newVal = { ...task };
-                                    (newVal as any)[key] = currentVal;
+                                    (newVal as any)[key] = newValue;
                                     setTask(newVal);
                                 }}
-                                type="datetime-local" />
-
+                                name={key} key={key} label={label} />
                         }
+
                         {
                             (type != 'select' && type != 'textarea' && type != 'datetimepicker') && <Input
                                 type={type}

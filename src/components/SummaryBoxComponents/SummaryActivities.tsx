@@ -106,16 +106,13 @@ export const SummaryActivities = ({ data }: BoxData<ReadOnlyFieldWithActivities>
     }
 
     useEffect(() => {
-
-
-
         return () => { }
     }, [])
 
     return (
         <>
             {(pendingEvents) && 'loading...'}
-            {summaryData.map(({ title, id, post_type, date, status, readOnlyFields }, i) => (
+            {summaryData.map(({ title, id, post_type, status, readOnlyFields, from, to }, i) => (
                 <div key={i} className='flex text-left items-center py-2 not-last:border-b-1 border-gray-300'>
                     <div className="w-2/12 flex justify-center">
                         {post_type == 'task' ? <TbChecklist size={25} /> : <FaRegCalendarAlt size={25} />}
@@ -128,7 +125,7 @@ export const SummaryActivities = ({ data }: BoxData<ReadOnlyFieldWithActivities>
                                 <span onClick={() => handleEdit(id)} className='cursor-pointer'><GoPencil /></span>
                             </div>
                         </div>
-                        <p className='font-semibold'>{date}</p>
+                        <p className='font-semibold'>Duration: {from} - {to}</p>
                     </div>
                     <div className="w-4/12 font-semibold ">
 

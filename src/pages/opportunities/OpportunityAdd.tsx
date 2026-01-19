@@ -1,4 +1,4 @@
-import { use, useEffect, useState, type ChangeEvent } from "react";
+import { useEffect, useState, type ChangeEvent } from "react";
 import { Input, TextArea } from "../../components/InputForm";
 import { ModuleContentWrapper } from "../../components/wrappers";
 
@@ -21,6 +21,10 @@ import { create_opportunity, edit_opportunity, get_opportunity } from "../../api
 import { FormFields } from "../../components/FormFields";
 import { useModuleHeader } from "../../hooks/useModuleHeader";
 import { useSearchByIdQueryOptions, useSearchByNameQueryOptions } from "../../hooks/useSearchByName";
+import { useServices } from "../../hooks/userServices";
+
+import dayjs from "dayjs";
+import { DatePicker } from "@mui/x-date-pickers";
 
 const defaultData = {} as Opportunity;
 const isEditing = window.location.href.includes('edit');
@@ -36,7 +40,7 @@ export const OpportunityAdd = () => {
 
     const { data: agents } = useAgents();
     const { data: terms } = useTaxonomies('opportunity');
-
+    const { data: services } = useServices();
 
     const [contacts, setContacts] = useState<SelectOption[]>([]);
 
@@ -49,7 +53,10 @@ export const OpportunityAdd = () => {
     const [data, setData] = useState<Opportunity>(initData ?? defaultData);
 
     const handleSave = () => {
-        mutate(data);
+        mutate({
+            ...data,
+            close_date: data.close_date ? dayjs(data.close_date as string | Date).format() : undefined,
+        });
     }
 
     const loadAsync = async (inputValue: string): Promise<SelectOption[]> => {
@@ -76,8 +83,6 @@ export const OpportunityAdd = () => {
         1000
     );
 
-
-
     useEffect(() => {
         let newFields = [...fields];
         const taxs = Object.keys(terms ?? {});
@@ -92,9 +97,14 @@ export const OpportunityAdd = () => {
             newFields[assigned_index].options = agents?.map((agent) => ({ label: agent.name, value: agent.id.toString() }));
         }
 
+        const related_services_index = newFields.findIndex(field => field.key == 'related_services')
+        if (related_services_index != -1) {
+            newFields[related_services_index].options = services?.map((service) => ({ label: service.title, value: service.id.toString() }))
+        }
+
         setFields(newFields);
         return () => { }
-    }, [agents, terms]);
+    }, [agents, terms, services]);
 
     useEffect(() => {
         const fetchContacts = async () => {
@@ -121,9 +131,9 @@ export const OpportunityAdd = () => {
             <h1 className="mb-5">Opportunity Details</h1>
 
             <form className="grid grid-cols-2 gap-y-5 gap-x-24" >
-                {fields.map(({ key, type, label, required, options, placeholder, isClearable, children, isAsyncSelect }) => (
+                {fields.map(({ key, type, label, required, options, placeholder, isClearable, children, isAsyncSelect, isMultiSelect }) => (
                     <div className={`flex ${type == 'section' ? 'flex-col' : ''} justify-between ${type == 'textarea' || type == 'section' ? 'col-span-2' : ''}`} key={key}>
-                        {type != 'section' && <label className="text-sm" htmlFor={key}> {label} {required && <sup className="text-red-500 text-base translate-y-1.5 ml-1 inline-block">*</sup>}</label>}
+                        {type != 'section' && <label className="text-sm  w-1/2" htmlFor={key}> {label} {required && <sup className="text-red-500 text-base translate-y-1.5 ml-1 inline-block">*</sup>}</label>}
                         {
                             (type != 'select' && type != 'textarea' && type != 'checkbox' && type != 'datetimepicker' && type != 'section') && <Input
                                 type={type}
@@ -141,22 +151,19 @@ export const OpportunityAdd = () => {
                             />
                         }
 
-                        {
-                            type == 'datetimepicker' && <Input
-                                name={key} id={key}
-                                placeholder={placeholder ?? label}
-                                aria-label={label}
-                                className='w-1/2'
-                                value={data?.[key as keyof Opportunity]}
-                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                    const currentVal = e.target.value;
 
+
+                        {
+                            type == 'datetimepicker'
+                            &&
+                            <DatePicker className='w-1/2'
+                                value={data?.[key as keyof Opportunity] as dayjs.Dayjs}
+                                onChange={(newValue) => {
                                     let newVal = { ...data };
-                                    (newVal as any)[key] = currentVal;
+                                    (newVal as any)[key] = newValue;
                                     setData(newVal);
                                 }}
-                                type="date" />
-
+                                name={key} key={key} label={label} />
                         }
 
                         {
@@ -164,15 +171,21 @@ export const OpportunityAdd = () => {
                                 className="w-1/2"
                                 cacheOptions
                                 isClearable
+                                isMulti={isMultiSelect}
                                 defaultOptions={contacts}
                                 placeholder={placeholder ?? label}
                                 loadOptions={debouncedLoadProperties}
-                                value={data?.[key as keyof Opportunity]
-                                    ? { label: contacts.find(prop => prop.value == data[key as keyof Opportunity])?.label, value: data[key as keyof Opportunity] } as SelectOption
-                                    : null}
+                                value={options?.find(option => option.value === (data as any)[key])}
                                 onChange={(selectedOption) => {
+
                                     let newVal = { ...data };
-                                    (newVal as any)[key] = (selectedOption as SelectOption)?.value;
+                                    if (Array.isArray(selectedOption)) {
+                                        (newVal as any)[key] = selectedOption.map((item: SelectOption) => item.value);
+                                    } else if (!Array.isArray(selectedOption) && selectedOption) {
+                                        const selected = selectedOption as SelectOption;
+                                        (newVal as any)[key] = selected.value;
+                                    }
+
                                     setData(newVal);
                                 }}
                             />
@@ -183,12 +196,22 @@ export const OpportunityAdd = () => {
                                 <Select
                                     className="w-1/2"
                                     isClearable={isClearable}
+                                    isMulti={isMultiSelect}
                                     isSearchable={false}
                                     value={options?.find(opt => opt.value == data[key as keyof Opportunity])}
                                     options={options ?? []}
                                     onChange={(selectedOption) => {
+
                                         let newVal = { ...data };
-                                        (newVal as any)[key] = (selectedOption as SelectOption)?.value;
+
+                                        if (Array.isArray(selectedOption)) {
+                                            (newVal as any)[key as keyof Opportunity] = selectedOption.map((item: SelectOption) => item.value);
+                                        } else if (!Array.isArray(selectedOption) && selectedOption) {
+                                            const selected = selectedOption as SelectOption;
+                                            (newVal as any)[key as keyof Opportunity] = selected.value;
+                                        }
+
+
                                         setData(newVal);
                                     }}
                                 />

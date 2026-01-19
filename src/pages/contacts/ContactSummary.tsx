@@ -115,7 +115,7 @@ const ContactSummary = () => {
                 <SingleBoxContainer>
                     <SingleBoxTitle>Key Fields</SingleBoxTitle>
                     <div className="space-y-2">
-                        {keyFields.map(({ key, type, label, required }) => (
+                        {keyFields.map(({ key, type, label }) => (
                             <div className={`flex justify-between relative group ${type == 'textarea' ? 'col-span-2' : ''}`} key={key}>
                                 <label className="text-sm" htmlFor={key}>{label}</label>
 

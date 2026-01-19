@@ -3,8 +3,9 @@ import { SummaryDocuments } from "./SummaryDocuments";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import { useRelated } from "../../hooks/useRelated";
-import type { Activities, Document, Task } from "../../helpers/types";
+import type { Activities, Document, Service } from "../../helpers/types";
 import { SummaryActivities } from "./SummaryActivities";
+import { SummaryRelatedServices } from "./SummaryRelatedServices";
 
 type SummaryBoxDataProps = {
     noFoundMessage?: string,
@@ -29,6 +30,10 @@ export const SummaryBoxData = ({ noFoundMessage, boxKey }: SummaryBoxDataProps) 
 
             case 'Activities':
                 render = <SummaryActivities data={data as Activities[]} />
+                break;
+
+            case 'Related Services':
+                render = <SummaryRelatedServices data={data as Service[]} />
                 break;
 
             default:

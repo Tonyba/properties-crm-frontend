@@ -1,6 +1,6 @@
 import { useIsFetching, useQueryClient } from "@tanstack/react-query";
 import type { InputItem } from "../helpers/types";
-import { useLocation, useNavigate } from "react-router";
+import { useLocation, useNavigate, useSearchParams } from "react-router";
 import { useEffect, useState } from "react";
 import { useModuleHeader } from "../hooks/useModuleHeader";
 import { useAgents } from "../hooks/useAgents";
@@ -8,6 +8,8 @@ import { useSingleList } from "../hooks/useSingleList";
 import TableFilters from "../ui/table_filters/TableFilters";
 import DataTable from "react-data-table-component";
 import { ModuleContentWrapper } from "./wrappers";
+import { useServices } from "../hooks/userServices";
+import { DataKanban } from "./DataKanban";
 
 export type DatatableListProps = {
     dataCols: {
@@ -20,6 +22,8 @@ export type DatatableListProps = {
 
 const DatableList = ({ dataCols, get_fn, filterFields }: DatatableListProps) => {
 
+
+    const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const location = useLocation();
     const [tableFilters, setFilters] = useState(filterFields);
@@ -32,6 +36,7 @@ const DatableList = ({ dataCols, get_fn, filterFields }: DatatableListProps) => 
         filters: {}
     });
     const { data: agents } = useAgents();
+    const { data: services } = useServices();
 
     const fetching = useIsFetching({ queryKey: [`${moduleSingle}/list`] }) > 0;
 
@@ -42,7 +47,6 @@ const DatableList = ({ dataCols, get_fn, filterFields }: DatatableListProps) => 
         filtersValues.map(filter => {
             if (filter.value) newFilters[filter.key] = filter.value
         });
-
         setRequest({ ...request, page: 1, filters: newFilters });
     }
 
@@ -69,6 +73,7 @@ const DatableList = ({ dataCols, get_fn, filterFields }: DatatableListProps) => 
     const { data } = useSingleList(request, get_fn);
 
     useEffect(() => {
+
         const newFilters = [...tableFilters];
 
         newFilters.map(field => {
@@ -79,36 +84,43 @@ const DatableList = ({ dataCols, get_fn, filterFields }: DatatableListProps) => 
         });
 
         const invalidate = async () => {
+
             await queryClient.invalidateQueries({ queryKey: [`${moduleSingle}/list`] });
         };
+
         if (!firstTime) invalidate();
 
         setFilters(newFilters);
 
         return () => { }
 
-    }, [request.perPage, JSON.stringify(request.filters), agents]);
+    }, [request.perPage, JSON.stringify(request.filters), agents, services]);
 
 
     return (
         <ModuleContentWrapper>
             <TableFilters searchFn={handleSearch} filters={tableFilters} />
 
-            <DataTable
-                columns={[...dataCols]}
-                progressPending={fetching}
-                responsive
-                highlightOnHover
-                pointerOnHover
-                pagination
-                paginationPerPage={request.perPage}
-                paginationTotalRows={data?.recordsFiltered}
-                paginationServer
-                data={data?.data ?? []}
-                onChangeRowsPerPage={handleChangePerPage}
-                onChangePage={handlePaginationChange}
-                onRowClicked={handleRowClick}
-            />
+            {searchParams.get('view') == 'kanban'
+                ? <div className="mt-10"><DataKanban /></div>
+                : <DataTable
+                    columns={[...dataCols]}
+                    progressPending={fetching}
+                    responsive
+                    highlightOnHover
+                    pointerOnHover
+                    pagination
+                    paginationPerPage={request.perPage}
+                    paginationTotalRows={data?.recordsFiltered}
+                    paginationServer
+                    data={data?.data ?? []}
+                    onChangeRowsPerPage={handleChangePerPage}
+                    onChangePage={handlePaginationChange}
+                    onRowClicked={handleRowClick}
+                />
+            }
+
+
 
         </ModuleContentWrapper>
     )

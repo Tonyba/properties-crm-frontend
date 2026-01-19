@@ -83,6 +83,7 @@ const DocumentsTab = () => {
     const handleRowClick = (row: any) => {
         //  navigate(`./leads/
         // ${row.id}/details`);
+        console.log(row)
     }
 
     const docsOpts = [

@@ -1,5 +1,7 @@
 import type { RouteObject } from "react-router";
 import type { ActionOptType } from "../components/SummaryBoxComponents/SummaryBox";
+import type { DateValue, RangeValue } from "react-aria";
+import type dayjs from "dayjs";
 
 export type SingleModuleMoreBtnActionType = {
     fn: () => void,
@@ -32,8 +34,8 @@ export type Task = {
     assigned_to: string;
     relation?: number;
     contact?: number;
-    from: string;
-    to: string;
+    from: string | Date | dayjs.Dayjs;
+    to: string | Date | dayjs.Dayjs;
     description?: string;
     event_status: string;
     priority?: string;
@@ -44,8 +46,8 @@ export type Task = {
 export type Event = {
     id: number;
     title: string;
-    from: string;
-    to: string;
+    from: string | Date | dayjs.Dayjs;
+    to: string | Date | dayjs.Dayjs;
     event_status: string;
     assigned_to: string;
     priority?: string;
@@ -92,6 +94,8 @@ export type Activities = {
     id: number;
     status: string;
     relation?: number;
+    from: string;
+    to: string;
 }
 
 export type GenericResponse = {
@@ -134,6 +138,11 @@ export type Lead = {
     requested_property?: string;
 }
 
+export type Service = {
+    id: number;
+    title: string;
+}
+
 export type Agent = {
     name: string;
     id: number;
@@ -174,6 +183,7 @@ export type ModuleHeaderPropsType = {
     filter?: boolean;
     isCreate?: boolean;
     showCreateBtn?: boolean;
+    showViewSwitcher?: boolean;
 }
 
 export type RouterItem = RouteObject & {
@@ -186,11 +196,17 @@ export type RouterItem = RouteObject & {
 
 export type IsNever<T> = [T] extends [never] ? true : false;
 
+export type InputRangeDate = {
+    start: DateValue | Date;
+    end: DateValue | Date,
+}
+
 export type InputItem = {
     label?: string;
     key: string;
     type: 'text' | 'datetimepicker' | 'section' | 'select' | 'number' | 'checkbox' | 'radio' | 'textarea' | 'tel' | 'email' | 'upload' | 'hidden';
-    value?: string | string[];
+    value?: string | string[] | InputRangeDate | DateValue;
+    isSingleDate?: boolean;
     required?: boolean;
     isMultiSelect?: boolean;
     options?: SelectOption[];
@@ -252,15 +268,16 @@ export type Contact = {
 export type Opportunity = {
     id: string | number;
     title: string;
-    contact: number | string;
+    contact: number[] | string[] | SelectOption[];
     assigned_to: number | string;
     lead_source: number | string;
     lead_status: number | string;
-    close_date: string;
+    close_date?: string | Date | DateValue | RangeValue<DateValue> | dayjs.Dayjs;
     description?: string;
     country?: string;
     state?: string;
     city?: string;
+    related_services?: string[] | SelectOption[]
 }
 
 export type QuickOffCanvasProps = {

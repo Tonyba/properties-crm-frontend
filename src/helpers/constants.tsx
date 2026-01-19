@@ -7,7 +7,7 @@ export const API_URL = 'http://properties-crm.local/wp-admin/admin-ajax.php';
 export const headerHeight = 72;
 export const iconSize = 20
 
-export const DateFormat = 'D/M/Y HH:MM';
+export const DateFormat = 'D/M/YYYY HH:MM';
 
 export const RelatedTypes = ['lead', 'task', 'event', 'document', 'property'];
 
@@ -357,7 +357,8 @@ export const fullOpportunityFields: InputItem[] = [
         type: 'select',
         required: true,
         isClearable: false,
-        isAsyncSelect: true
+        isAsyncSelect: true,
+        isMultiSelect: true
     },
     {
         key: 'assigned_to',
@@ -365,6 +366,13 @@ export const fullOpportunityFields: InputItem[] = [
         type: 'select',
         required: true,
         isClearable: false
+    },
+    {
+        key: 'related_services',
+        label: 'Selected Services',
+        isClearable: true,
+        type: 'select',
+        isMultiSelect: true
     },
     {
         key: 'lead_source',
@@ -411,6 +419,34 @@ export const fullOpportunityFields: InputItem[] = [
     }
 ];
 
+export const opportunityFields: InputItem[] = [
+    {
+        key: 'title',
+        label: 'Name',
+        type: 'text',
+    },
+    {
+        key: 'lead_status',
+        label: 'Lead Status',
+        type: 'select',
+    },
+    {
+        key: 'lead_source',
+        label: 'Lead Source',
+        type: 'select',
+    },
+    {
+        key: 'close_date',
+        label: 'Expected Close Date',
+        type: 'datetimepicker'
+    },
+    {
+        key: 'assigned_to',
+        label: 'Assigned To',
+        type: 'select'
+    }
+];
+
 export const fullLeadFields: InputItem[] = [
     ...leadFields,
     {
@@ -443,7 +479,7 @@ export const fullLeadFields: InputItem[] = [
     },
     {
         key: 'requested_property',
-        label: 'Requested Property',
+        label: 'Requested Services',
         type: 'select',
         options: []
     },

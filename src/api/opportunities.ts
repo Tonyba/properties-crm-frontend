@@ -8,14 +8,30 @@ export const edit_opportunity = (data: Opportunity) => axios.post<CreateLeadRequ
 
 export const get_opportunity = <T>(id: string, updating?: boolean) => axios.post<GetSingleResponse<T & GenericResponse>>(`${API_URL}`, new URLSearchParams({ action: 'get_opportunity', id, updating: JSON.stringify(updating) }));
 
-export const opportunities_list = <T>(request: ListLeadRequest<T>) => {
+export const get_stages = <T>() => axios.post<GetSingleResponse<T>>(`${API_URL}`, new URLSearchParams({ action: 'get_stages' }));
 
-    const params = new URLSearchParams({
+export const opportunities_list = (request: ListLeadRequest<Opportunity>) => {
+
+
+    const url_params = {
         filters: JSON.stringify(request.filters),
         page: (request.page ?? 1).toString(),
         perPage: (request.perPage ?? 20).toString()
-    })
+    }
 
-    return axios.post<GetLeadsResponse<T>>(
-        `${API_URL}?action=get_opportunities`, params);
+    const params = new URLSearchParams(url_params);
+    return axios.post<GetLeadsResponse<Opportunity>>(
+        `${API_URL}?action=get_opportunies`, params);
+}
+export const get_related_services = async <T>(id: string) => {
+
+    try {
+
+        const resp = await axios.post<T[]>(`${API_URL}?action=related_services`, new URLSearchParams({ id }));
+        return resp.data;
+
+    } catch (error) {
+        console.log(error)
+    }
+
 }
