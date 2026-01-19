@@ -21,7 +21,7 @@ export default function LeadDetails() {
     const [createPath, filter, importBtn, moduleSingle, showCreateBtn] = useModuleHeader();
     const navigate = useNavigate();
 
-    const { deleteFn } = useHandleItemDeletion(moduleSingle ?? 'lead');
+    const { deleteFn } = useHandleItemDeletion(moduleSingle ?? 'Lead');
 
     const singleLead = lead as Lead;
     const menu = LeadOptions(singleLead.id);

@@ -32,8 +32,8 @@ const QuickEvent = () => {
 
 
     const [event, setEvent] = useState<Event>({
-        from: dayjs().toISOString(),
-        to: dayjs().toISOString(),
+        from: dayjs(),
+        to: dayjs(),
         relation: parseInt(id!)
     } as Event);
 

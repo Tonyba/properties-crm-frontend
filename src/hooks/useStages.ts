@@ -3,7 +3,7 @@ import { get_stages } from "../api/opportunities";
 import type { SelectOption } from "../helpers/types";
 
 const getFromCache = (queryClient: QueryClient) => {
-    return queryClient.getQueryData<{ id: number, title: string }[]>(['stages']);
+    return queryClient.getQueryData<SelectOption[]>(['stages']);
 };
 
 export const useStages = () => {

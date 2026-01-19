@@ -77,7 +77,7 @@ const OpportunityDetails = () => {
                 </div>
 
                 <div className="flex gap-1">
-                    <FilterButton> <Link to={`/marketing/leads/${singleOpportunity.id}/edit`}>Edit</Link></FilterButton>
+                    <FilterButton> <Link to={`/sales/opportunity/${singleOpportunity.id}/edit`}>Edit</Link></FilterButton>
                     <FilterButton>Send Email</FilterButton>
 
                     <SingleModuleMoreBtn actions={OpportunityMoreActions} />

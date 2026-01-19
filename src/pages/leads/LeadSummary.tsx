@@ -19,6 +19,8 @@ import { useAgents } from "../../hooks/useAgents";
 import { SummaryBox } from "../../components/SummaryBoxComponents/SummaryBox";
 import { useLeadUpdate } from "../../hooks/useLeadUpdate";
 import { useOffcanvas, useOffcanvasMutation } from "../../hooks/useOffcanvas";
+import { useModuleHeader } from "@/hooks/useModuleHeader";
+import { useGetSingle } from "@/hooks/useGetSingle";
 
 const keyFields = leadFields.filter(item => item.required);
 
@@ -27,7 +29,10 @@ const LeadSummary = () => {
     const { id } = useParams();
     const queryClient = useQueryClient();
 
-    const lead = queryClient.getQueryData<Lead>([`lead/${id}`]);
+    const [createPath, filter, importBtn, moduleSingle, showCreateBtn, showViewSwitcher] = useModuleHeader();
+
+    const { data: lead } = useGetSingle({});
+    console.log(lead)
     const { data: agents } = useAgents();
 
     const [leadData, setLeadData] = useState<Lead & { readonly: true }>(lead as Lead & { readonly: true });

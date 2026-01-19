@@ -1,4 +1,4 @@
-import { queryOptions, useQuery, useQueryClient } from "@tanstack/react-query";
+import { queryOptions, useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import { useModuleHeader } from "./useModuleHeader";
 import { get_contact } from "../api/contacts";
@@ -14,6 +14,7 @@ export const useGetSingle = <T>({ get_fn, updating }: UseGetSingleParams) => {
     const { id } = useParams();
     const [createPath, filter, importBtn, moduleSingle, showCreateBtn] = useModuleHeader();
 
+
     return useQuery({
         queryKey: [`${moduleSingle}/${id}`],
         queryFn: async () => {
@@ -22,8 +23,6 @@ export const useGetSingle = <T>({ get_fn, updating }: UseGetSingleParams) => {
             if (!id) return {} as T;
 
             let resp;
-
-
             if (get_fn) {
                 const response = await get_fn(id!, updating ?? false);
                 return response.data.data;
@@ -56,7 +55,6 @@ export const useGetSingleSuspense = (get_fn: (id: string, updating?: boolean) =>
 
     const { id } = useParams();
     const [createPath, filter, importBtn, moduleSingle, showCreateBtn] = useModuleHeader();
-
 
     return queryOptions({
         queryKey: [`${moduleSingle}/${id}`],

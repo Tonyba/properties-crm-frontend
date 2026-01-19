@@ -24,7 +24,7 @@ export const ModuleHeader = () => {
     useEffect(() => {
         if (showViewSwitcher) {
             const newSearchParams = new URLSearchParams(searchParams);
-            newSearchParams.set('view', 'kanban');
+            if (!searchParams.get('view')) newSearchParams.set('view', 'kanban');
             setSearchParams(newSearchParams);
         }
 

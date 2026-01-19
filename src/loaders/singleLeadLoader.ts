@@ -7,7 +7,7 @@ export const leadDetailsLoader = (_queryClient: QueryClient) => async ({ params 
     const id = params.id ?? '';
     const resp = await _queryClient.ensureQueryData(
         queryOptions({
-            queryKey: [`lead/${id}`],
+            queryKey: [`Lead/${id}`],
             queryFn: async () => {
                 if (!id) return {};
                 // const cache = getFromCache((id), queryClient);

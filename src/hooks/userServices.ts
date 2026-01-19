@@ -1,8 +1,9 @@
 import { QueryClient, useQuery, useQueryClient } from "@tanstack/react-query";
 import { get_services } from "../api/properties";
+import type { SelectOption } from "@/helpers/types";
 
 const getFromCache = (queryClient: QueryClient) => {
-    return queryClient.getQueryData<{ id: number, title: string }[]>(['services']);
+    return queryClient.getQueryData<SelectOption[]>(['services']);
 };
 
 export const useServices = () => {

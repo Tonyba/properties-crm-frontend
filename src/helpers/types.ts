@@ -2,6 +2,7 @@ import type { RouteObject } from "react-router";
 import type { ActionOptType } from "../components/SummaryBoxComponents/SummaryBox";
 import type { DateValue, RangeValue } from "react-aria";
 import type dayjs from "dayjs";
+import type { KanbanBoardCircleColor } from "@/components/kanban";
 
 export type SingleModuleMoreBtnActionType = {
     fn: () => void,
@@ -119,6 +120,19 @@ export type GetUpdateResponseType = {
 export type TaxonomiesArr = {
     [key: string]: SelectOption[]
 };
+
+export type Card = {
+    id: string;
+    title: string;
+};
+
+export type Column<T> = {
+    id: string;
+    title: string;
+    color: KanbanBoardCircleColor;
+    items: T[];
+};
+
 
 export type Lead = {
     id: number;

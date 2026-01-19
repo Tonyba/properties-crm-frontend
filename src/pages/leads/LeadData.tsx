@@ -22,7 +22,7 @@ function LeadData() {
     const queryClient = useQueryClient();
     const textAreaRef = useRef<HTMLTemplateElement>(null);
 
-    const lead = queryClient.getQueryData<Lead>([`lead/${id}`]);
+    const lead = queryClient.getQueryData<Lead>([`Lead/${id}`]);
 
     const { data: { data } } = useSuspenseQuery(selectsLeadQuery());
 

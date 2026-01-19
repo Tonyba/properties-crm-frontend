@@ -324,7 +324,7 @@ export const routesFn = (queryClient?: QueryClient) => {
                             }
                         },
                         {
-                            label: 'Edit Lead',
+                            label: 'Edit Opportunity',
                             path: 'opportunity/:id/edit',
                             Component: OpportunityAdd,
                             loader: queryClient && OpportunityLoader,

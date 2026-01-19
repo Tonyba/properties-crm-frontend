@@ -16,7 +16,7 @@ export const useSingleLeadSuspense = (updating?: boolean) => {
     const [createPath, filter, importBtn, moduleSingle, showCreateBtn] = useModuleHeader();
 
     return queryOptions({
-        queryKey: [`${moduleSingle}/${id}`],
+        queryKey: [`${moduleSingle ?? 'Lead'}/${id}`],
         queryFn: async () => {
 
             if (!id) return {};

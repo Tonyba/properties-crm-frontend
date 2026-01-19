@@ -92,8 +92,8 @@ const megaMenuItems = [
     }
 ];
 
-const megaFooterOptions = [
-    {
+const megaFooterOptions: any[] = [
+    /*{
         path: '/users',
         label: 'Manage Users',
         icon: <LuUserRound size={footerIconSize} />,
@@ -102,7 +102,7 @@ const megaFooterOptions = [
         path: '/settings',
         label: 'CRM Settings',
         icon: <BiCog size={footerIconSize} />,
-    },
+    },*/
 
 ]
 

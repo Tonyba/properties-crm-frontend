@@ -1,15 +1,16 @@
 import { useIsFetching, useQueryClient } from "@tanstack/react-query";
-import type { InputItem } from "../helpers/types";
+import type { Column, InputItem, Opportunity } from "../helpers/types";
 import { useLocation, useNavigate, useSearchParams } from "react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useModuleHeader } from "../hooks/useModuleHeader";
 import { useAgents } from "../hooks/useAgents";
 import { useSingleList } from "../hooks/useSingleList";
 import TableFilters from "../ui/table_filters/TableFilters";
 import DataTable from "react-data-table-component";
 import { ModuleContentWrapper } from "./wrappers";
-import { useServices } from "../hooks/userServices";
 import { DataKanban } from "./DataKanban";
+import { useStages } from "@/hooks/useStages";
+import { useSources } from "@/hooks/useSources";
 
 export type DatatableListProps = {
     dataCols: {
@@ -31,12 +32,14 @@ const DatableList = ({ dataCols, get_fn, filterFields }: DatatableListProps) => 
     const queryClient = useQueryClient();
     const [firstTime, setFirstTime] = useState(true);
     const [request, setRequest] = useState({
-        perPage: 20,
+        perPage: searchParams.get('view') == 'kanban' ? -1 : 20,
         page: 1,
         filters: {}
     });
     const { data: agents } = useAgents();
-    const { data: services } = useServices();
+    const { data: stages } = useStages();
+    const { data: sources } = useSources();
+
 
     const fetching = useIsFetching({ queryKey: [`${moduleSingle}/list`] }) > 0;
 
@@ -51,11 +54,13 @@ const DatableList = ({ dataCols, get_fn, filterFields }: DatatableListProps) => 
     }
 
     const handlePaginationChange = (page: number) => {
+        if (page <= 0) page = 1;
         setRequest({ ...request, page });
     }
 
     const handleChangePerPage = async (newPerPage: number, page: number) => {
-        if (!firstTime) setRequest({ ...request, perPage: newPerPage, page });
+        if (newPerPage == -1) newPerPage = 20;
+        if (!firstTime && searchParams.get('view') == 'table') setRequest({ ...request, perPage: newPerPage, page: 1 });
         setFirstTime(false);
     }
 
@@ -72,29 +77,64 @@ const DatableList = ({ dataCols, get_fn, filterFields }: DatatableListProps) => 
 
     const { data } = useSingleList(request, get_fn);
 
-    useEffect(() => {
+    const columnsData = useMemo(() => {
+        if (!stages || !data) return [];
 
+        return stages.map((stage) => ({
+            color: '',
+            id: stage.value,
+            title: stage.label,
+            items: (data.data as Opportunity[]).filter(
+                (item: Opportunity) => item.lead_status === stage.label
+            ),
+        }));
+    }, [stages, data]);
+
+    useEffect(() => {
+        // Consolidar la lógica de actualización de request
+        const view = searchParams.get('view');
+        const newPerPage = view === 'kanban' ? -1 : 20;
+
+        if (request.perPage !== newPerPage || request.page !== 1) {
+            setRequest((prevRequest) => ({
+                ...prevRequest,
+                perPage: newPerPage,
+                page: 1,
+            }));
+        }
+    }, [searchParams]);
+
+    useEffect(() => {
         const newFilters = [...tableFilters];
 
-        newFilters.map(field => {
-            if (field.key == 'assigned_to') {
-                field.options = agents?.map(agent => ({ label: agent.name, value: agent.id.toString() }));
-                field.isMultiSelect = true;
+        newFilters.forEach((field) => {
+
+            switch (field.key) {
+                case 'assigned_to':
+                    field.options = agents?.map((agent) => ({ label: agent.name, value: agent.id.toString() }));
+                    field.isMultiSelect = true;
+                    break;
+
+                case 'lead_status':
+                    field.options = stages;
+                    field.isMultiSelect = true;
+                    break;
+
+                case 'lead_source':
+                    field.options = sources;
+                    field.isMultiSelect = true;
+                    break;
             }
         });
 
-        const invalidate = async () => {
-
-            await queryClient.invalidateQueries({ queryKey: [`${moduleSingle}/list`] });
-        };
-
-        if (!firstTime) invalidate();
-
         setFilters(newFilters);
 
-        return () => { }
+        if (!firstTime) {
+            queryClient.invalidateQueries({ queryKey: [`${moduleSingle}/list`] });
+        }
 
-    }, [request.perPage, JSON.stringify(request.filters), agents, services]);
+        setFirstTime(false);
+    }, [JSON.stringify(request.filters), agents, request.perPage]);
 
 
     return (
@@ -102,7 +142,7 @@ const DatableList = ({ dataCols, get_fn, filterFields }: DatatableListProps) => 
             <TableFilters searchFn={handleSearch} filters={tableFilters} />
 
             {searchParams.get('view') == 'kanban'
-                ? <div className="mt-10"><DataKanban /></div>
+                ? (columnsData.length && !fetching) ? <div className="mt-10 max-w-[90vw] "><DataKanban dataColumns={columnsData as Column<Opportunity>[]} /></div> : (fetching) ? 'loading...' : 'no records found'
                 : <DataTable
                     columns={[...dataCols]}
                     progressPending={fetching}

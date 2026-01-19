@@ -33,7 +33,8 @@ export const OpportunityAdd = () => {
 
     const queryClient = useQueryClient();
     const { data: dataItem } = useSuspenseQuery(useGetSingleSuspense(get_opportunity, true));
-    const initData = dataItem as Opportunity;
+
+    const initData = dataItem as Opportunity | undefined;
 
     const [fields, setFields] = useState(fullOpportunityFields);
     const [createPath, filter, importBtn, moduleSingle, showCreateBtn] = useModuleHeader();
@@ -50,11 +51,12 @@ export const OpportunityAdd = () => {
         isEditing
     });
 
-    const [data, setData] = useState<Opportunity>(initData ?? defaultData);
+    const [data, setData] = useState<Opportunity>(initData ? { ...initData, close_date: initData.close_date ? dayjs(initData.close_date as string) : dayjs() } : defaultData);
 
     const handleSave = () => {
         mutate({
             ...data,
+            contact: data.contact.map((cont) => (cont as SelectOption).value),
             close_date: data.close_date ? dayjs(data.close_date as string | Date).format() : undefined,
         });
     }
@@ -75,6 +77,17 @@ export const OpportunityAdd = () => {
 
         return props;
     };
+
+
+    const testing = (value: any) => {
+
+        if (Array.isArray(value) && value.length > 0 && value[0].label) {
+            return value;
+        } else {
+            return [];
+        }
+
+    }
 
     const debouncedLoadProperties = debounce(
         (inputValue: string, callback: (options: SelectOption[]) => void) => {
@@ -99,12 +112,13 @@ export const OpportunityAdd = () => {
 
         const related_services_index = newFields.findIndex(field => field.key == 'related_services')
         if (related_services_index != -1) {
-            newFields[related_services_index].options = services?.map((service) => ({ label: service.title, value: service.id.toString() }))
+            newFields[related_services_index].options = services?.map((service) => ({ label: (service as { title: string; id: number; }).title, value: (service as { title: string; id: number; }).id.toString() }))
         }
 
         setFields(newFields);
         return () => { }
     }, [agents, terms, services]);
+
 
     useEffect(() => {
         const fetchContacts = async () => {
@@ -119,6 +133,17 @@ export const OpportunityAdd = () => {
                         value: prop.id.toString(),
                     }))
                     : []
+
+
+                const finalData: SelectOption[] = [];
+
+                data.contact?.map((item) => {
+                    props.map(prop => {
+                        if (item == prop.value) finalData.push({ value: item.toString(), label: prop.label });
+                    })
+                });
+
+                if (initData) setData({ ...data, contact: finalData });
 
                 setContacts(props);
             }
@@ -150,9 +175,6 @@ export const OpportunityAdd = () => {
                                 }}
                             />
                         }
-
-
-
                         {
                             type == 'datetimepicker'
                             &&
@@ -166,6 +188,7 @@ export const OpportunityAdd = () => {
                                 name={key} key={key} label={label} />
                         }
 
+
                         {
                             type == 'select' && isAsyncSelect && <AsyncSelect
                                 className="w-1/2"
@@ -175,12 +198,14 @@ export const OpportunityAdd = () => {
                                 defaultOptions={contacts}
                                 placeholder={placeholder ?? label}
                                 loadOptions={debouncedLoadProperties}
-                                value={options?.find(option => option.value === (data as any)[key])}
+                                value={isMultiSelect
+                                    ? testing((data as any)[key])
+                                    : options?.find(option => option.value == (data as any)[key])}
                                 onChange={(selectedOption) => {
 
                                     let newVal = { ...data };
                                     if (Array.isArray(selectedOption)) {
-                                        (newVal as any)[key] = selectedOption.map((item: SelectOption) => item.value);
+                                        (newVal as any)[key] = selectedOption
                                     } else if (!Array.isArray(selectedOption) && selectedOption) {
                                         const selected = selectedOption as SelectOption;
                                         (newVal as any)[key] = selected.value;
@@ -198,7 +223,7 @@ export const OpportunityAdd = () => {
                                     isClearable={isClearable}
                                     isMulti={isMultiSelect}
                                     isSearchable={false}
-                                    value={options?.find(opt => opt.value == data[key as keyof Opportunity])}
+                                    value={options?.find(option => option.value == (data as any)[key])}
                                     options={options ?? []}
                                     onChange={(selectedOption) => {
 

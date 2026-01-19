@@ -23,6 +23,9 @@ export const opportunities_list = (request: ListLeadRequest<Opportunity>) => {
     return axios.post<GetLeadsResponse<Opportunity>>(
         `${API_URL}?action=get_opportunies`, params);
 }
+
+export const get_sources = () => axios.post(`${API_URL}`, new URLSearchParams({ action: 'get_sources' }));
+
 export const get_related_services = async <T>(id: string) => {
 
     try {
