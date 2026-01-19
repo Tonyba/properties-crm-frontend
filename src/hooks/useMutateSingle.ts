@@ -3,6 +3,7 @@ import { useModuleHeader } from "./useModuleHeader";
 import { useNavigate, useParams } from "react-router";
 import type { CreateLeadRequest } from "../helpers/types";
 import type { AxiosResponse } from "axios";
+import { invalidateSingle } from "../helpers/helpers";
 
 type useMutateSingleProps<T> = {
     createFn: (data: T) => Promise<AxiosResponse<CreateLeadRequest, any>>;
@@ -22,6 +23,9 @@ export const useMutateSingle = <T>({ createFn, updateFn, isEditing, returnBack }
         onSuccess: async () => {
             await queryClient.invalidateQueries({ queryKey: [`${moduleSingle}/list`] });
             await queryClient.invalidateQueries({ queryKey: [`${moduleSingle}/${id}`] });
+
+            await invalidateSingle(moduleSingle ?? 'module', id ?? 'id', moduleSingle ?? 'module', queryClient);
+
             if (returnBack) navigate(-1);
         }
     });
