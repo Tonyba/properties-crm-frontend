@@ -7,6 +7,7 @@ import loadable from "@loadable/component";
 const QuickCreationForm = loadable(() => import('../components/QuickCreationForms/QuickDocument'));
 const QuickEvent = loadable(() => import('./QuickCreationForms/QuickEvent'));
 const QuickTask = loadable(() => import('./QuickCreationForms/QuickTask'));
+const QuickEmail = loadable(() => import('./QuickCreationForms/QuickEmail'));
 
 export const Offcanvas = () => {
 
@@ -52,6 +53,9 @@ const renderComponent = (component: string) => {
             form = <QuickEvent />
             break;
 
+        case "email":
+            form = <QuickEmail />
+            break;
         default:
             break;
     }

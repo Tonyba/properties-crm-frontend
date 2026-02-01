@@ -57,6 +57,7 @@ export const OpportunityAdd = () => {
         mutate({
             ...data,
             contact: data.contact.map((cont) => (cont as SelectOption).value),
+            related_services: data.related_services?.map((cont) => (cont as SelectOption).value),
             close_date: data.close_date ? dayjs(data.close_date as string | Date).format() : undefined,
         });
     }
@@ -127,6 +128,8 @@ export const OpportunityAdd = () => {
                     useSearchByIdQueryOptions<Opportunity>(`search_by/${moduleSingle}/${data.contact}`, data.contact.toString(), queryClient)
                 );
 
+
+
                 const props = Array.isArray(dataContacts)
                     ? dataContacts.map((prop: Opportunity) => ({
                         label: prop.title,
@@ -135,7 +138,9 @@ export const OpportunityAdd = () => {
                     : []
 
 
+
                 const finalData: SelectOption[] = [];
+                const servData: SelectOption[] = [];
 
                 data.contact?.map((item) => {
                     props.map(prop => {
@@ -143,7 +148,20 @@ export const OpportunityAdd = () => {
                     })
                 });
 
-                if (initData) setData({ ...data, contact: finalData });
+                if (initData) {
+                    setData({
+                        ...data,
+                        contact: finalData,
+                        related_services: data.related_services ? data.related_services?.map((item) => {
+
+                            const found = services?.find(serv => (serv as SelectOption).value == item.toString());
+                            return {
+                                label: 'gher',
+                                value: item.toString()
+                            } as SelectOption;
+                        }) : []
+                    });
+                }
 
                 setContacts(props);
             }
@@ -223,14 +241,14 @@ export const OpportunityAdd = () => {
                                     isClearable={isClearable}
                                     isMulti={isMultiSelect}
                                     isSearchable={false}
-                                    value={options?.find(option => option.value == (data as any)[key])}
+                                    value={isMultiSelect
+                                        ? testing((data as any)[key])
+                                        : options?.find(option => option.value == (data as any)[key])}
                                     options={options ?? []}
                                     onChange={(selectedOption) => {
-
                                         let newVal = { ...data };
-
                                         if (Array.isArray(selectedOption)) {
-                                            (newVal as any)[key as keyof Opportunity] = selectedOption.map((item: SelectOption) => item.value);
+                                            (newVal as any)[key as keyof Opportunity] = selectedOption;
                                         } else if (!Array.isArray(selectedOption) && selectedOption) {
                                             const selected = selectedOption as SelectOption;
                                             (newVal as any)[key as keyof Opportunity] = selected.value;

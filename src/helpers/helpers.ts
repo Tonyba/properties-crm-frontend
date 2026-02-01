@@ -70,6 +70,16 @@ export const capitalizeFirstLetter = (str?: string) => {
     return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
 }
 
+export const serialize = (obj: object) => {
+    var str = [];
+    for (var p in obj)
+        if (obj.hasOwnProperty(p)) {
+            str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p as keyof object]));
+        }
+    return str.join("&");
+}
+
+
 export const invalidateSingle = async (key: string, id: string | number, moduleSingle: string, queryClient: QueryClient) => {
     await queryClient.invalidateQueries({ queryKey: [`${key}/Tasks/${id}`] });
     await queryClient.invalidateQueries({ queryKey: [`${key}/Activities/${id}`] });

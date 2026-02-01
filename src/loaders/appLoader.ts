@@ -5,7 +5,7 @@ export const appLoader =
     (_queryClient: QueryClient) =>
         async ({ request }: LoaderFunctionArgs) => {
             const url = new URL(request.url)
-            const q = url.searchParams.get('q') ?? ''
-            // await setTimeout(() => { }, 2000);
+            const q = url.searchParams.get('q') ?? '';
+
             return { q }
         }

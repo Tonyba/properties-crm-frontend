@@ -277,7 +277,6 @@ const OpportunityData = () => {
                                         : options?.find(option => option.value == (data as any)[key])}
                                     options={options ?? []}
                                     onChange={(selectedOption) => {
-
                                         let newVal = { ...data };
                                         if (Array.isArray(selectedOption)) {
                                             (newVal as any)[key as keyof Opportunity] = selectedOption;

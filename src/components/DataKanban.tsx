@@ -33,6 +33,9 @@ import { useMutateSingle } from "@/hooks/useMutateSingle";
 import { create_opportunity, edit_opportunity } from "@/api/opportunities";
 import { useAgents } from "@/hooks/useAgents";
 import { useSources } from "@/hooks/useSources";
+import dayjs from "dayjs";
+import { useLocation, useNavigate } from "react-router";
+import { useModuleHeader } from "@/hooks/useModuleHeader";
 
 type DataKabanProps<T> = {
     dataColumns: Column<T>[]
@@ -583,7 +586,10 @@ function MyKanbanBoardCard({
     onDeleteCard: (cardId: string) => void;
     onUpdateCardTitle: (cardId: string, cardTitle: string) => void;
 }) {
+    const navigate = useNavigate();
+    const location = useLocation();
     const [isEditingTitle, setIsEditingTitle] = useState(false);
+    const [createPath, filter, importBtn, moduleSingle, showCreateBtn] = useModuleHeader();
     const kanbanBoardCardReference = useRef<HTMLButtonElement>(null);
     // This ref tracks the previous `isActive` state. It is used to refocus the
     // card after it was discarded with the keyboard.
@@ -626,12 +632,24 @@ function MyKanbanBoardCard({
     //     handleBlur();
     // }
 
+    const goToSingle = () => {
+        const path = location.pathname.split('/');
+        const lastPart = path[path.length - 1];
+        let pathToUse = `./${card.id}/details`;
+
+        if (!lastPart.includes(moduleSingle?.toLowerCase() ?? '')) pathToUse = `${moduleSingle?.toLowerCase()}/${card.id}/details`;
+
+        navigate(pathToUse);
+    }
+
+    console.log(card)
+
     return (
         <KanbanBoardCard
             data={{ ...card, id: card.id.toString() }}
             isActive={isActive}
             onBlur={onCardBlur}
-            onClick={() => setIsEditingTitle(true)}
+            onClick={() => goToSingle()}
             onKeyDown={event => {
                 if (event.key === ' ') {
                     // Prevent the button "click" action on space because that should
@@ -648,7 +666,15 @@ function MyKanbanBoardCard({
             }}
             ref={kanbanBoardCardReference}
         >
-            <KanbanBoardCardDescription>{card.title}</KanbanBoardCardDescription>
+            <KanbanBoardCardDescription>
+
+                <h3 className="font-semibold text-sm" >{card.title}</h3>
+                <div className="text-red-600">closed date: {dayjs(card.close_date as string).format('DD MMM')} </div>
+
+                <p className="mt-5 text-gray-600">Assigned to: {card.assigned_to}</p>
+
+
+            </KanbanBoardCardDescription>
             {/* <KanbanBoardCardButtonGroup disabled={isActive}>
                 <KanbanBoardCardButton
                     className="text-destructive"

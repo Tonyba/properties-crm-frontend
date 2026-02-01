@@ -142,16 +142,16 @@ const LeadOptions = (id: number) => {
             label: 'Documents',
             icon: <LuFileSpreadsheet />,
         },
-        {
-            path: `${baseUrl}/${id}/details/campaigns`,
-            label: 'Campaigns',
-            icon: <FaBullhorn />,
-        },
-        {
-            path: `${baseUrl}/${id}/details/comments`,
-            label: 'Comments',
-            icon: <FaRegComments />
-        },
+        /*     {
+                path: `${baseUrl}/${id}/details/campaigns`,
+                label: 'Campaigns',
+                icon: <FaBullhorn />,
+            }, */
+        /*     {
+                path: `${baseUrl}/${id}/details/comments`,
+                label: 'Comments',
+                icon: <FaRegComments />
+            }, */
     ];
 
 }
@@ -192,16 +192,16 @@ const ContactOptions = (id: number) => {
             label: 'Documents',
             icon: <LuFileSpreadsheet />,
         },
-        {
-            path: `${baseUrl}/${id}/details/campaigns`,
-            label: 'Campaigns',
-            icon: <FaBullhorn />,
-        },
-        {
-            path: `${baseUrl}/${id}/details/comments`,
-            label: 'Comments',
-            icon: <FaRegComments />
-        },
+        /*   {
+              path: `${baseUrl}/${id}/details/campaigns`,
+              label: 'Campaigns',
+              icon: <FaBullhorn />,
+          }, */
+        /*   {
+              path: `${baseUrl}/${id}/details/comments`,
+              label: 'Comments',
+              icon: <FaRegComments />
+          }, */
     ];
 
 }

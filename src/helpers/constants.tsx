@@ -25,6 +25,31 @@ export const DefaultOffcanvasOpts: OffcanvasProps = {
     }
 }
 
+export const SEND_EMAILS_FORM_ID = 11;
+
+export const EmailTemplates = [
+    {
+        name: 'Follow Up',
+        content: `
+            Dear {first_name} {last_name} <br> <br>
+
+            Thank you for extending us the opportunity to meet with
+            you and members of your staff.<br> <br>
+
+            I know that {assigned_to} serviced your account
+            for many years and made many friends at your firm. He has personally
+            discussed with me the deep relationship that he had with your firm.
+            While his presence will be missed, I can promise that we will
+            continue to provide the fine service that was accorded by
+            {assigned_to} to your firm.<br> <br>
+
+            I was genuinely touched to receive such fine hospitality. <br> <br>
+
+            Thank you once again.
+        `
+    },
+];
+
 export const TaskFormFields: InputItem[] = [
     {
         key: 'title',

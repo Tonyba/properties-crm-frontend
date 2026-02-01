@@ -23,8 +23,8 @@ import TabComments from "./pages/TabComments";
 type RouteItems = RouterItem[];
 
 const DashboardPage = loadable(() => import("./pages/dashboard/DashboardPage"));
-
 const PropertiesPage = loadable(() => import("./pages/properties/PropertiesPage"));
+const LoginPage = loadable(() => import("./pages/login/LoginPage"));
 
 // Marketing Module
 const MarketingPage = loadable(() => import("./pages/leads/LeadRoot"));
@@ -336,6 +336,10 @@ export const routesFn = (queryClient?: QueryClient) => {
                 }
             ]
         },
+        {
+            path: '/login',
+            Component: LoginPage
+        }
     ];
 
     if (queryClient) {

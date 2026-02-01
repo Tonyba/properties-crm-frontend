@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from "@tanstack/react-query"
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query"
 import { Link, NavLink, Outlet } from "react-router";
 import { ModuleContentWrapper } from "../../components/wrappers";
 import { FaAddressCard } from "react-icons/fa";
@@ -14,14 +14,19 @@ import { SingleModuleMoreBtn } from "../../components/SingleModuleMoreBtn";
 import { useModuleHeader } from "../../hooks/useModuleHeader";
 import { useNavigate } from 'react-router';
 import { useHandleItemDeletion } from "../../hooks/useHandleItemDeletion";
+import { useOffcanvas, useOffcanvasMutation } from "@/hooks/useOffcanvas";
 
 export default function LeadDetails() {
 
     const { data: lead } = useSuspenseQuery(useSingleLeadSuspense(true));
     const [createPath, filter, importBtn, moduleSingle, showCreateBtn] = useModuleHeader();
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
 
     const { deleteFn } = useHandleItemDeletion(moduleSingle ?? 'Lead');
+
+    const { mutate: mutateOffcanvas } = useOffcanvasMutation({ queryClient });
+    const { data: offcanvasOpts } = useOffcanvas({ queryClient });
 
     const singleLead = lead as Lead;
     const menu = LeadOptions(singleLead.id);
@@ -54,6 +59,17 @@ export default function LeadDetails() {
         }
     ];
 
+    const handleSendEmail = () => {
+        mutateOffcanvas({
+            queryClient,
+            offCanvasOpts: {
+                ...offcanvasOpts,
+                title: 'Send Email',
+                template: 'email',
+                size: 'xl',
+            }
+        });
+    }
 
     return (
         <ModuleContentWrapper>
@@ -76,7 +92,7 @@ export default function LeadDetails() {
 
                 <div className="flex gap-1">
                     <FilterButton> <Link to={`/marketing/leads/${singleLead.id}/edit`}>Edit</Link></FilterButton>
-                    <FilterButton>Send Email</FilterButton>
+                    <FilterButton onClick={handleSendEmail} >Send Email</FilterButton>
                     <FilterButton>Convert Lead</FilterButton>
 
                     <SingleModuleMoreBtn actions={leadMoreActions} />

@@ -11,6 +11,7 @@ import { ModuleContentWrapper } from "./wrappers";
 import { DataKanban } from "./DataKanban";
 import { useStages } from "@/hooks/useStages";
 import { useSources } from "@/hooks/useSources";
+import { KANBAN_BOARD_CIRCLE_COLORS } from "./kanban";
 
 export type DatatableListProps = {
     dataCols: {
@@ -80,10 +81,12 @@ const DatableList = ({ dataCols, get_fn, filterFields }: DatatableListProps) => 
     const columnsData = useMemo(() => {
         if (!stages || !data) return [];
 
-        return stages.map((stage) => ({
-            color: '',
+        return stages.map((stage, i) => ({
+            color: KANBAN_BOARD_CIRCLE_COLORS[i + 1],
             id: stage.value,
-            title: stage.label,
+            title: stage.label + `(${(data.data as Opportunity[]).filter(
+                (item: Opportunity) => item.lead_status === stage.label
+            ).length})`,
             items: (data.data as Opportunity[]).filter(
                 (item: Opportunity) => item.lead_status === stage.label
             ),
@@ -142,7 +145,12 @@ const DatableList = ({ dataCols, get_fn, filterFields }: DatatableListProps) => 
             <TableFilters searchFn={handleSearch} filters={tableFilters} />
 
             {searchParams.get('view') == 'kanban'
-                ? (columnsData.length && !fetching) ? <div className="mt-10 max-w-[90vw] "><DataKanban dataColumns={columnsData as Column<Opportunity>[]} /></div> : (fetching) ? 'loading...' : 'no records found'
+                ? (columnsData.length && !fetching)
+                    ? <div className="mt-10 max-w-[88vw] ">
+                        <DataKanban dataColumns={columnsData as Column<Opportunity>[]} />
+                    </div> : (fetching)
+                        ? 'loading...'
+                        : 'no records found'
                 : <DataTable
                     columns={[...dataCols]}
                     progressPending={fetching}

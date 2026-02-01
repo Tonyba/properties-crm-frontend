@@ -5,6 +5,7 @@ import type { GenericResponse, Lead } from "../helpers/types";
 
 export const leadDetailsLoader = (_queryClient: QueryClient) => async ({ params }: LoaderFunctionArgs) => {
     const id = params.id ?? '';
+
     const resp = await _queryClient.ensureQueryData(
         queryOptions({
             queryKey: [`Lead/${id}`],
