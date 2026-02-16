@@ -26,7 +26,7 @@ export const SaveBottomBar = ({ onCancel, onSubmit, isLoading, isFullWidth, save
             <SaveButton type="submit" onClick={onSubmit} disabled={isLoading} className='inline-flex gap-3 items-center'>
                 {isLoading && <OrbitProgress style={{ fontSize: "4px" }} color={'white'} variant="track-disc" speedPlus={0} easing="linear" />}
                 {saveString ?? buttonText}</SaveButton>
-            <FilterButton onClick={onCancel ? onCancel : defaultCancelHandler} disabled={isLoading}>Cancel</FilterButton>
+            <FilterButton type="button" onClick={onCancel ? onCancel : defaultCancelHandler} disabled={isLoading}>Cancel</FilterButton>
         </div>
     )
 }

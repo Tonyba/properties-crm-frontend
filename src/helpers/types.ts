@@ -80,12 +80,25 @@ export type OffcanvasProps = {
     open?: boolean,
     title?: string,
     template?: string,
-    size?: 'sm' | 'xl',
+    size?: 'sm' | 'xl' | 'full',
+    position?: 'top' | 'left' | 'right' | 'bottom',
     customOpts?: OffcanvasCustomOpts
 }
 
 export type OffcanvasCustomOpts = {
     external: boolean
+}
+
+export type ImportResponse = {
+    errors: any[]
+    duplicated: number,
+    failed: number,
+    imported: number
+}
+
+export type ImportDataArgs = {
+    data: Object[],
+    post_type: string
 }
 
 export type Activities = {
@@ -150,6 +163,9 @@ export type Lead = {
     description?: string;
     source?: string;
     requested_property?: string;
+    city?: string;
+    state?: string;
+    country?: string;
 }
 
 export type Service = {
@@ -210,10 +226,14 @@ export type RouterItem = RouteObject & {
 
 export type IsNever<T> = [T] extends [never] ? true : false;
 
+export type KeyTaxonomy = 'document' | 'task' | 'event' | 'property' | 'lead' | 'contact' | 'opportunity';
+
+
 export type InputRangeDate = {
     start: DateValue | Date;
     end: DateValue | Date,
 }
+
 
 export type InputItem = {
     label?: string;
@@ -232,6 +252,7 @@ export type InputItem = {
     isFilterField?: boolean;
     children?: InputItem[];
     isAsyncSelect?: boolean;
+    isSearchable?: boolean;
 }
 
 export type SelectOption = {
@@ -271,11 +292,11 @@ export type Contact = {
     email_opt_out: boolean;
     not_call: boolean;
     assigned_to: number | string;
-    mailing_street?: string;
-    mailing_city?: string;
-    mailing_state?: string;
-    mailing_country?: string;
-    mailing_zip?: string
+    street?: string;
+    city?: string;
+    state?: string;
+    country?: string;
+    zip?: string
     description?: string
 }
 
@@ -292,6 +313,12 @@ export type Opportunity = {
     state?: string;
     city?: string;
     related_services?: string[] | SelectOption[]
+}
+
+export type Email = {
+    subject: string;
+    created_at: DateValue | Date | string;
+    to: string;
 }
 
 export type QuickOffCanvasProps = {

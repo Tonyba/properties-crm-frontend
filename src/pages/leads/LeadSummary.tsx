@@ -32,7 +32,7 @@ const LeadSummary = () => {
     const [createPath, filter, importBtn, moduleSingle, showCreateBtn, showViewSwitcher] = useModuleHeader();
 
     const { data: lead } = useGetSingle({});
-    console.log(lead)
+
     const { data: agents } = useAgents();
 
     const [leadData, setLeadData] = useState<Lead & { readonly: true }>(lead as Lead & { readonly: true });

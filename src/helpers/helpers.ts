@@ -1,9 +1,10 @@
 import type { QueryClient } from "@tanstack/react-query";
-import type { AddSelectsResponse, GenericResponse, SelectOption } from "./types";
+import type { AddSelectsResponse, GenericResponse, ImportDataArgs, ImportResponse, SelectOption } from "./types";
 import { API_URL, ValidExt, validSizeInMB } from "./constants";
 import axios from "axios";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import type { useEmailRequest } from "@/hooks/useEmails";
 
 export const formatSelectOpt = (label: string, value: string): SelectOption => {
     return { label, value };
@@ -41,14 +42,16 @@ export const removeFileExtFromFilename = (filename: string) => {
     return filename.substring(0, lastDotIndex);
 }
 
-export const checkValidFiles = (files: File[]) => {
+export const checkValidFiles = (files: File[], ValidExtensions?: string[]) => {
     let isValid = true;
+
+    const extensionsToCheck = ValidExtensions ?? ValidExt;
 
     for (const file of files) {
 
         const extension = file.name.split('.').pop()?.toLowerCase();
 
-        if (!extension || !ValidExt.includes(extension)) {
+        if (!extension || !extensionsToCheck.includes(extension)) {
             isValid = false;
             continue;
         }
@@ -90,6 +93,7 @@ export const invalidateSingle = async (key: string, id: string | number, moduleS
     await queryClient.invalidateQueries({ queryKey: [`${moduleSingle}/${key}/${id}`] });
     await queryClient.invalidateQueries({ queryKey: [`${moduleSingle}-docs/detail/${id}/list`] });
     await queryClient.invalidateQueries({ queryKey: [`${moduleSingle}/detail/${id}/list`] })
+    await queryClient.invalidateQueries({ queryKey: [`${moduleSingle}/list`] })
 }
 
 export const handleItemDeletion = async (
@@ -132,7 +136,26 @@ export const handleItemDeletion = async (
 
 }
 
+export const formatPostType = (post_type: string) => {
+
+    let formatted = post_type.toLowerCase();
+
+    if (formatted == 'leads') formatted = 'lead';
+
+    return formatted;
+}
+
 export const trashItem = async (item: number, relation?: string) => axios.post<GenericResponse>(`${API_URL}?action=trash_item`, new URLSearchParams({ id: item.toString(), relation: relation?.toString() ?? '' }));
+export const getEmails = async <T>(request: useEmailRequest<T>) => axios.post(`${API_URL}?action=get_emails`, new URLSearchParams({
+    id: request.id.toString(),
+    filters: JSON.stringify(request.filters),
+    page: request.page !== undefined ? request.page.toString() : "",
+    perPage: request.perPage.toString()
+}));
+
+export const importData = async (dataArgs: ImportDataArgs) => {
+    return axios.post<GenericResponse & ImportResponse>(`${API_URL}?action=import_data`, new URLSearchParams({ data: JSON.stringify(dataArgs.data), post_type: dataArgs.post_type }));
+}
 
 export const escapeHtml = (unsafe: string) => {
     return unsafe.replace(/&amp;/g, "&");

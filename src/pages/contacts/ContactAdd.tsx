@@ -1,6 +1,8 @@
 import { useEffect, useState, type ChangeEvent } from "react";
 import { Input, TextArea } from "../../components/InputForm";
 import { ModuleContentWrapper } from "../../components/wrappers";
+import { Country, State, City } from 'country-state-city';
+
 
 import Select from 'react-select';
 
@@ -16,6 +18,9 @@ import { useGetSingleSuspense } from "../../hooks/useGetSingle";
 
 const defaultData = {} as Contact;
 const isEditing = window.location.href.includes('edit');
+
+const todosPaises = Country.getAllCountries();
+
 
 export const AddContact = () => {
 
@@ -39,11 +44,67 @@ export const AddContact = () => {
         mutate(data);
     }
 
+    // state hook
+    useEffect(() => {
 
+        const newFields = [...fields];
+        const stateIndex = newFields.findIndex(field => field.key == 'state');
+        const cityIndex = newFields.findIndex(field => field.key == 'city');
+
+        if (!data.country) {
+            newFields[stateIndex].options = [];
+            newFields[cityIndex].options = [];
+            setData({ ...data, state: '', city: '' });
+            setFields(newFields);
+            return;
+        };
+
+
+        const countryCode = todosPaises.find(cty => cty.name == data.country)?.isoCode;
+
+        const states = State.getStatesOfCountry(countryCode);
+        newFields[stateIndex].options = states.map(state => ({ label: state.name, value: state.name }));
+
+        setFields(newFields);
+
+    }, [data.country]);
+
+    // city hook
+    useEffect(() => {
+
+        const newFields = [...fields];
+        const stateIndex = newFields.findIndex(field => field.key == 'state');
+        const cityIndex = newFields.findIndex(field => field.key == 'city');
+
+        if (!data.state || !data.country) {
+            newFields[cityIndex].options = [];
+            newFields[stateIndex].options = [];
+            setData({ ...data, city: '', state: '' });
+            setFields(newFields);
+            return;
+        };
+
+        const countryCode = todosPaises.find(cty => cty.name == data.country)?.isoCode;
+        const states = State.getStatesOfCountry(countryCode);
+        const stateCode = states.find(st => st.name == data.state)?.isoCode;
+
+
+        const cities = City.getCitiesOfState(countryCode!, stateCode!);
+
+
+        newFields[cityIndex].options = cities.map(city => ({ label: city.name, value: city.name }));
+
+        setFields(newFields);
+
+    }, [data.state]);
 
     useEffect(() => {
         let newFields = [...fields];
         const taxs = Object.keys(terms ?? {});
+
+        const countryIndex = newFields.findIndex(field => field.key == 'country');
+        newFields[countryIndex].options = todosPaises.map(country => ({ label: country.name, value: country.name }));
+
 
         if (terms) taxs.map(tax => {
             const foundIndex = newFields.findIndex(field => field.key == tax);
@@ -57,6 +118,7 @@ export const AddContact = () => {
 
         setFields(newFields);
         return () => { }
+
     }, [agents, terms]);
 
     return (
@@ -64,7 +126,7 @@ export const AddContact = () => {
             <h1 className="mb-5">Contact Details</h1>
 
             <form className="grid grid-cols-2 gap-y-5 gap-x-24" >
-                {fields.map(({ key, type, label, required, options, placeholder, isClearable }) => (
+                {fields.map(({ key, type, label, required, options, placeholder, isClearable, isSearchable }) => (
                     <div className={`flex justify-between ${type == 'textarea' ? 'col-span-2' : ''}`} key={key}>
                         <label className="text-sm" htmlFor={key}> {label} {required && <sup className="text-red-500 text-base translate-y-1.5 ml-1 inline-block">*</sup>}</label>
                         {
@@ -115,7 +177,7 @@ export const AddContact = () => {
                                 <Select
                                     className="w-1/2"
                                     isClearable={isClearable}
-                                    isSearchable={false}
+                                    isSearchable={isSearchable}
                                     value={options?.find(opt => opt.value == data[key as keyof Contact])}
                                     options={options ?? []}
                                     onChange={(selectedOption) => {

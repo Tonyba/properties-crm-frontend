@@ -1,7 +1,7 @@
 import { FaMoneyBill } from "react-icons/fa"
 import { ModuleContentWrapper } from "../../components/wrappers"
 import { iconSize } from "../../helpers/constants"
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useGetSingleSuspense } from "../../hooks/useGetSingle";
 import { get_opportunity } from "../../api/opportunities";
 import { FilterButton } from "../../components/FilterButton";
@@ -13,12 +13,14 @@ import { useModuleHeader } from "../../hooks/useModuleHeader";
 import { DetailStageSelector } from "../../components/DetailStageSelector";
 import { OpportunityOptions } from "@/helpers/menus";
 import { useStages } from "@/hooks/useStages";
+import { useOffcanvas, useOffcanvasMutation } from "@/hooks/useOffcanvas";
 
 const OpportunityDetails = () => {
 
     const { data: opportunity } = useSuspenseQuery(useGetSingleSuspense(get_opportunity, true));
     const [createPath, filter, importBtn, moduleSingle, showCreateBtn] = useModuleHeader();
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
     const { deleteFn } = useHandleItemDeletion(moduleSingle ?? 'Opportunity');
     const singleOpportunity = opportunity as Opportunity;
     const { data: stages } = useStages();
@@ -48,6 +50,22 @@ const OpportunityDetails = () => {
     ];
 
     const menu = OpportunityOptions(parseInt(singleOpportunity?.id?.toString() ?? 0));
+
+    const { mutate: mutateOffcanvas } = useOffcanvasMutation({ queryClient });
+    const { data: offcanvasOpts } = useOffcanvas({ queryClient });
+
+
+    const handleSendEmail = () => {
+        mutateOffcanvas({
+            queryClient,
+            offCanvasOpts: {
+                ...offcanvasOpts,
+                title: 'Send Email',
+                template: 'email',
+                size: 'xl',
+            }
+        });
+    }
 
     return (
         <ModuleContentWrapper>

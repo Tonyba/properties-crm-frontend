@@ -59,8 +59,6 @@ const DocumentsTab = () => {
 
     const handleSearch = (filtersValues: InputItem[]) => {
 
-        console.log(filtersValues)
-
         let newFilters: any = {};
 
         filtersValues.map(filter => {
@@ -161,8 +159,6 @@ const DocumentsTab = () => {
             </div>
 
             <TableFilters searchFn={handleSearch} filters={fields} />
-
-
 
             <DataTable
                 columns={[{

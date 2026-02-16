@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from "@tanstack/react-query"
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query"
 import { Link, NavLink, Outlet } from "react-router";
 import { ModuleContentWrapper } from "../../components/wrappers";
 import { FaAddressCard } from "react-icons/fa";
@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router';
 import { useHandleItemDeletion } from "../../hooks/useHandleItemDeletion";
 import { useGetSingleSuspense } from "../../hooks/useGetSingle";
 import { get_contact } from "../../api/contacts";
+import { useOffcanvas, useOffcanvasMutation } from "@/hooks/useOffcanvas";
 
 
 export default function ContactDetails() {
@@ -20,11 +21,13 @@ export default function ContactDetails() {
     const { data: contact } = useSuspenseQuery(useGetSingleSuspense(get_contact, true));
     const [createPath, filter, importBtn, moduleSingle, showCreateBtn] = useModuleHeader();
     const navigate = useNavigate();
-
+    const queryClient = useQueryClient();
     const { deleteFn } = useHandleItemDeletion(moduleSingle ?? 'Contact');
 
     const singleContact = contact as Contact;
     const menu = ContactOptions(parseInt(singleContact?.id?.toString() ?? 0));
+
+
 
     const ContactMoreActions: SingleModuleMoreBtnActionType[] = [
         {
@@ -54,6 +57,22 @@ export default function ContactDetails() {
         }
     ];
 
+    const { mutate: mutateOffcanvas } = useOffcanvasMutation({ queryClient });
+    const { data: offcanvasOpts } = useOffcanvas({ queryClient });
+
+
+    const handleSendEmail = () => {
+        mutateOffcanvas({
+            queryClient,
+            offCanvasOpts: {
+                ...offcanvasOpts,
+                title: 'Send Email',
+                template: 'email',
+                size: 'xl',
+            }
+        });
+    }
+
 
     return (
         <ModuleContentWrapper>
@@ -77,7 +96,7 @@ export default function ContactDetails() {
 
                 <div className="flex gap-1">
                     <FilterButton> <Link to={`/marketing/contacts/${singleContact.id}/edit`}>Edit</Link></FilterButton>
-                    <FilterButton>Send Email</FilterButton>
+                    <FilterButton onClick={handleSendEmail} >Send Email</FilterButton>
 
                     <SingleModuleMoreBtn actions={ContactMoreActions} />
 

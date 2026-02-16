@@ -5,7 +5,7 @@ interface OffCanvasBodyProps {
 }
 
 interface OffcanvasBodyExtensions extends OffCanvasBodyProps {
-    $size: 'sm' | 'xl'
+    $size: 'sm' | 'xl' | 'full'
 }
 
 export const OffCanvasBody = tw.div`
@@ -15,7 +15,9 @@ export const OffCanvasBody = tw.div`
     right-0
     transition
     invisible
-    ${({ $size }: OffcanvasBodyExtensions) => $size == 'xl' ? `w-[50vw]` : ' w-[30vw]'}
+    ${({ $size }: OffcanvasBodyExtensions) => $size == 'xl' ? `w-[50vw]` : ''}
+    ${({ $size }: OffcanvasBodyExtensions) => $size == 'sm' ? `w-[30vw]` : ''}
+     ${({ $size }: OffcanvasBodyExtensions) => $size == 'full' ? `w-full` : ''}
     ${({ $open }: OffcanvasBodyExtensions) => $open && `visible before:z-10
     before:fixed
     before:top-0

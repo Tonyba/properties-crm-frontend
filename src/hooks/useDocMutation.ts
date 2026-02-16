@@ -1,4 +1,4 @@
-import { QueryClient, useMutation } from "@tanstack/react-query";
+import { type QueryClient, useMutation } from "@tanstack/react-query";
 import { create_document } from "../api/documents";
 import { useParams } from "react-router";
 import { useModuleHeader } from "./useModuleHeader";

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { Input, TextArea } from "../../components/InputForm";
 import { ModuleContentWrapper } from "../../components/wrappers";
 import { fullLeadFields } from "../../helpers/constants"
+import { Country, State, City } from 'country-state-city';
 
 import Select from 'react-select';
 import AsyncSelect from 'react-select/async';
@@ -21,13 +22,14 @@ import { formatData } from "../../helpers/helpers";
 const defaultLead = {} as Lead;
 const isEditing = window.location.href.includes('edit');
 
+const todosPaises = Country.getAllCountries();
 
 export default function LeadAdd() {
 
     const queryClient = useQueryClient();
     const { data: lead } = useSuspenseQuery(useSingleLeadSuspense(true));
     const initLead = lead as Lead;
-
+    const [fields, setFields] = useState(fullLeadFields);
 
     const navigate = useNavigate();
 
@@ -76,7 +78,66 @@ export default function LeadAdd() {
         mutate(leadData);
     }
 
+    // state hook
     useEffect(() => {
+
+        const newFields = [...fields];
+        const stateIndex = newFields.findIndex(field => field.key == 'state');
+        const cityIndex = newFields.findIndex(field => field.key == 'city');
+
+        if (!leadData.country) {
+            newFields[stateIndex].options = [];
+            newFields[cityIndex].options = [];
+            setLeadData({ ...leadData, state: '', city: '' });
+            setFields(newFields);
+            return;
+        };
+
+
+        const countryCode = todosPaises.find(cty => cty.name == leadData.country)?.isoCode;
+
+        const states = State.getStatesOfCountry(countryCode);
+        newFields[stateIndex].options = states.map(state => ({ label: state.name, value: state.name }));
+
+        setFields(newFields);
+
+    }, [leadData.country]);
+
+    // city hook
+    useEffect(() => {
+
+        const newFields = [...fields];
+        const stateIndex = newFields.findIndex(field => field.key == 'state');
+        const cityIndex = newFields.findIndex(field => field.key == 'city');
+
+        if (!leadData.state || !leadData.country) {
+            newFields[cityIndex].options = [];
+            newFields[stateIndex].options = [];
+            setLeadData({ ...leadData, city: '', state: '' });
+            setFields(newFields);
+            return;
+        };
+
+        const countryCode = todosPaises.find(cty => cty.name == leadData.country)?.isoCode;
+        const states = State.getStatesOfCountry(countryCode);
+        const stateCode = states.find(st => st.name == leadData.state)?.isoCode;
+
+
+        const cities = City.getCitiesOfState(countryCode!, stateCode!);
+
+
+        newFields[cityIndex].options = cities.map(city => ({ label: city.name, value: city.name }));
+
+        setFields(newFields);
+
+    }, [leadData.state]);
+
+    useEffect(() => {
+        let newFields = [...fields];
+
+        const countryIndex = newFields.findIndex(field => field.key == 'country');
+        newFields[countryIndex].options = todosPaises.map(country => ({ label: country.name, value: country.name }));
+
         const fetchProperties = async () => {
             if (leadData.requested_property) {
                 const data = await queryClient.fetchQuery(
@@ -94,13 +155,15 @@ export default function LeadAdd() {
             }
         };
         fetchProperties();
+
+        setFields(newFields);
     }, []);
 
     return (
         <ModuleContentWrapper>
             <h1 className="mb-5">Lead Details</h1>
             <form className="grid grid-cols-2 gap-y-5 gap-x-24" >
-                {fullLeadFields.map(({ key, type, label, required, options }) => (
+                {fields.map(({ key, type, label, required, options, isSearchable, isClearable }) => (
                     <div className={`flex justify-between ${type == 'textarea' ? 'col-span-2' : ''}`} key={key}>
                         <label className="text-sm" htmlFor={key}> {label} {required && <sup className="text-red-500 text-base translate-y-1.5 ml-1 inline-block">*</sup>}</label>
                         {
@@ -120,39 +183,69 @@ export default function LeadAdd() {
                             />
                         }
                         {
+                            type == 'select' && key == 'requested_property'
+                                ? <AsyncSelect
+                                    className="w-1/2"
+                                    cacheOptions
+                                    isClearable
+                                    defaultOptions={properties}
+                                    loadOptions={debouncedLoadProperties}
+                                    value={leadData?.[key as keyof Lead]
+                                        ? { label: properties.find(prop => prop.value == leadData[key as keyof Lead])?.label, value: leadData[key as keyof Lead] } as SelectOption
+                                        : null}
+                                    onChange={(selectedOption) => {
+                                        let newVal = { ...leadData };
+                                        (newVal as any)[key] = (selectedOption as SelectOption)?.value;
+                                        setLeadData(newVal);
+                                    }}
+                                />
+                                : <></>
+                        }
+
+                        {
                             type == 'select' && (
-                                key == 'requested_property' ?
-                                    <AsyncSelect
-                                        className="w-1/2"
-                                        cacheOptions
-                                        isClearable
-                                        defaultOptions={properties}
-                                        loadOptions={debouncedLoadProperties}
-                                        value={leadData?.[key as keyof Lead]
-                                            ? { label: properties.find(prop => prop.value == leadData[key as keyof Lead])?.label, value: leadData[key as keyof Lead] } as SelectOption
-                                            : null}
-                                        onChange={(selectedOption) => {
-                                            let newVal = { ...leadData };
-                                            (newVal as any)[key] = (selectedOption as SelectOption)?.value;
-                                            setLeadData(newVal);
-                                        }}
-                                    />
-                                    : <Select
-                                        className="w-1/2"
-                                        isClearable={key == 'assigned_to' ? false : true}
-                                        options={selectData[key as keyof AddSelectsResponse] ? formatData(selectData, key, options) : options}
-                                        value={leadData?.[key as keyof Lead]
-                                            ? {
-                                                label: selectData[key as keyof AddSelectsResponse].find(item => item.term_id.toString() == leadData[key as keyof Lead])?.name || options?.find(opt => opt.value == leadData[key as keyof Lead])?.label || String(leadData[key as keyof Lead]),
-                                                value: leadData[key as keyof Lead]
-                                            } as SelectOption
-                                            : null}
-                                        onChange={(selectedOption) => {
-                                            let newVal = { ...leadData };
-                                            (newVal as any)[key] = (selectedOption as SelectOption)?.value;
-                                            setLeadData(newVal);
-                                        }}
-                                    />
+                                key == 'country' ||
+                                key == 'state' ||
+                                key == 'city'
+                            ) && (
+                                <Select
+                                    className="w-1/2"
+                                    isClearable={isClearable}
+                                    isSearchable={isSearchable}
+                                    value={options?.find(opt => opt.value == leadData[key as keyof Lead])}
+                                    options={options ?? []}
+                                    onChange={(selectedOption) => {
+                                        let newVal = { ...leadData };
+                                        (newVal as any)[key] = (selectedOption as SelectOption)?.value;
+                                        setLeadData(newVal);
+                                    }}
+                                />
+                            )
+                        }
+
+                        {
+                            type == 'select'
+                            && key != 'country'
+                            && key != 'city'
+                            && key != 'state'
+                            && key != 'requested_property'
+                            && (
+                                <Select
+                                    className="w-1/2"
+                                    isClearable={key == 'assigned_to' ? false : true}
+                                    options={selectData[key as keyof AddSelectsResponse] ? formatData(selectData, key, options) : options}
+                                    value={leadData?.[key as keyof Lead]
+                                        ? {
+                                            label: selectData[key as keyof AddSelectsResponse].find(item => item.term_id.toString() == leadData[key as keyof Lead])?.name || options?.find(opt => opt.value == leadData[key as keyof Lead])?.label || String(leadData[key as keyof Lead]),
+                                            value: leadData[key as keyof Lead]
+                                        } as SelectOption
+                                        : null}
+                                    onChange={(selectedOption) => {
+                                        let newVal = { ...leadData };
+                                        (newVal as any)[key] = (selectedOption as SelectOption)?.value;
+                                        setLeadData(newVal);
+                                    }}
+                                />
                             )
                         }
 

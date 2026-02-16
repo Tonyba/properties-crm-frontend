@@ -16,7 +16,6 @@ import { get_opportunity } from "./api/opportunities";
 import OpportunityDetails from "./pages/opportunities/OpportunityDetails";
 import OpportunitySummary from "./pages/opportunities/OpportunitySummary";
 import OpportunityData from "./pages/opportunities/OpportunityData";
-import EmailsTab from "./pages/EmailsTab";
 import TabComments from "./pages/TabComments";
 
 
@@ -33,7 +32,6 @@ const AddLead = loadable(() => import("./pages/leads/LeadAdd"));
 
 const LeadDetails = loadable(() => import('./pages/leads/LeadDetails'));
 const LeadData = loadable(() => import('./pages/leads/LeadData'));
-const LeadEmails = loadable(() => import('./pages/leads/LeadEmails'));
 const LeadCampaigns = loadable(() => import('./pages/leads/LeadCampaigns'));
 const LeadComments = loadable(() => import('./pages/leads/LeadComments'));
 const LeadSummary = loadable(() => import('./pages/leads/LeadSummary'));
@@ -43,7 +41,6 @@ const ContactList = loadable(() => import('./pages/contacts/ContactList'));
 const ContactAdd = loadable(() => import('./pages/contacts/ContactAdd'));
 const ContactSummary = loadable(() => import('./pages/contacts/ContactSummary'));
 const ContactData = loadable(() => import('./pages/contacts/ContactData'));
-const ContactEmails = loadable(() => import('./pages/contacts/ContactEmails'));
 const ContactCampaigns = loadable(() => import('./pages/contacts/ContactCampaigns'));
 const ContactComments = loadable(() => import('./pages/contacts/ContactComments'))
 
@@ -53,10 +50,15 @@ const OpportunityList = loadable(() => import("./pages/opportunities/Opportunity
 const OpportunityAdd = loadable(() => import("./pages/opportunities/OpportunityAdd"));
 
 // Detail Tabs
-
 const UpdatesTab = loadable(() => import('./pages/UpdatesTab'));
 const ActivitiesTab = loadable(() => import('./pages/ActivitiesTab'));
 const DocumentsTab = loadable(() => import('./pages/DocumentsTab'));
+const EmailsTab = loadable(() => import('./pages/EmailsTab'));
+
+// Reports
+const ReportsPage = loadable(() => import('./pages/reports/ReportPage'));
+const AddReport = loadable(() => import('./pages/reports/AddReport'));
+const ReportList = loadable(() => import('./pages/reports/ReportList'));
 
 
 export const routesFn = (queryClient?: QueryClient) => {
@@ -69,6 +71,27 @@ export const routesFn = (queryClient?: QueryClient) => {
             path: '/',
             Component: App,
             children: [
+                {
+                    path: '/reports',
+                    Component: ReportsPage,
+                    label: 'Reports',
+                    children: [
+                        {
+                            index: true,
+                            label: 'Reports',
+                            Component: ReportList,
+                            headerProps: {
+                                moduleSingle: 'Report',
+                                showCreateBtn: true
+                            }
+                        },
+                        {
+                            path: 'add',
+                            label: 'Create Report',
+                            Component: AddReport
+                        }
+                    ]
+                },
                 {
                     index: true,
                     Component: DashboardPage,
@@ -138,7 +161,7 @@ export const routesFn = (queryClient?: QueryClient) => {
                                 {
                                     label: 'Emails',
                                     path: 'emails',
-                                    Component: LeadEmails
+                                    Component: EmailsTab
                                 },
                                 {
                                     label: 'Documents',
@@ -219,7 +242,7 @@ export const routesFn = (queryClient?: QueryClient) => {
                                 {
                                     label: 'Emails',
                                     path: 'emails',
-                                    Component: ContactEmails
+                                    Component: EmailsTab
                                 },
                                 {
                                     label: 'Documents',

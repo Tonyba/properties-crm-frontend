@@ -75,9 +75,6 @@ const QuickDocument = () => {
 
     const { data: offcanvasOpts } = useOffcanvas({ queryClient });
 
-
-
-
     useEffect(() => {
         let newFields = [...fields];
         const assigned_index = newFields.findIndex(field => field.key == 'assigned_to');

@@ -8,6 +8,8 @@ const QuickCreationForm = loadable(() => import('../components/QuickCreationForm
 const QuickEvent = loadable(() => import('./QuickCreationForms/QuickEvent'));
 const QuickTask = loadable(() => import('./QuickCreationForms/QuickTask'));
 const QuickEmail = loadable(() => import('./QuickCreationForms/QuickEmail'));
+const ImportOffcanvas = loadable(() => import('../components/ImportOffcanvas'));
+
 
 export const Offcanvas = () => {
 
@@ -18,6 +20,8 @@ export const Offcanvas = () => {
     const handleClose = () => {
         mutate({ queryClient, offCanvasOpts: { ...offcanvasOpts, open: false } })
     }
+
+    console.log(offcanvasOpts);
 
     return (
         <OffCanvasBody $open={offcanvasOpts?.open} $size={offcanvasOpts?.size} >
@@ -56,6 +60,11 @@ const renderComponent = (component: string) => {
         case "email":
             form = <QuickEmail />
             break;
+
+        case 'import':
+            form = <ImportOffcanvas />
+            break;
+
         default:
             break;
     }

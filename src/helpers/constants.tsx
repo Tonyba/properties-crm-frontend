@@ -12,7 +12,11 @@ export const DateFormat = 'D/M/YYYY HH:MM';
 export const RelatedTypes = ['lead', 'task', 'event', 'document', 'property'];
 
 export const ValidExt = ['jpg', 'png', 'pdf', 'jpeg', 'webp'];
-export const validSizeInMB = megabytesToBytes(5);
+export const ValidImportExt = ['csv', 'xls', 'xlsx'];
+export const validSizeInMB = megabytesToBytes(50);
+
+export const MainModules = ['lead', 'contact', 'opportunity'] as const;
+export const CompareOpts = ['equals', 'not equal to', 'starts with', 'ends with', 'contains', 'does not contain', 'is empty', 'is not empty'] as const;
 
 export const contactIcon = <FaUser size={iconSize} />
 
@@ -332,32 +336,39 @@ export const fullContactFields: InputItem[] = [
         isClearable: false
     },
     {
-        key: 'mailing_street',
+        key: 'country',
+        label: 'Mailing Country',
+        type: 'select',
+        isClearable: true,
+        isSearchable: true
+    },
+    {
+        key: 'state',
+        label: 'Mailing State',
+        type: 'select',
+        isClearable: true,
+        isSearchable: true
+    },
+    {
+        key: 'city',
+        label: 'Mailing City',
+        type: 'select',
+        isClearable: true,
+        isSearchable: true
+    },
+    {
+        key: 'street',
         label: 'Mailing Street 	',
         type: 'text'
     },
+
     {
-        key: 'mailing_city',
-        label: 'Mailing City',
-        type: 'text'
-    },
-    {
-        key: 'mailing_state',
-        label: 'Mailing State',
-        type: 'text'
-    },
-    {
-        key: 'mailing_country',
-        label: 'Mailing Country',
-        type: 'text'
-    },
-    {
-        key: 'mailing_zip',
+        key: 'zip',
         label: 'Mailing ZIP',
         type: 'text'
     },
     {
-        key: 'mailing_po',
+        key: 'po',
         label: 'Mailing Po Box',
         type: 'text'
     },
@@ -509,9 +520,52 @@ export const fullLeadFields: InputItem[] = [
         options: []
     },
     {
+        key: 'country',
+        label: 'Country',
+        type: 'select',
+        isClearable: true,
+        isSearchable: true
+    },
+    {
+        key: 'state',
+        label: 'State',
+        type: 'select',
+        isClearable: true,
+        isSearchable: true
+    },
+    {
+        key: 'city',
+        label: 'City',
+        type: 'select',
+        isClearable: true,
+        isSearchable: true
+    },
+    {
         key: 'description',
         label: 'Description Details',
         type: 'textarea'
     }
 ]
 
+export const emailFilterFields: InputItem[] = [
+    {
+        key: 'to',
+        type: 'email',
+        label: 'Receiver'
+    },
+    {
+        key: 'subject',
+        type: 'text',
+        label: 'Subject'
+    },
+    {
+        key: 'content',
+        type: 'text',
+        label: 'Content'
+    },
+    {
+        key: 'created_at',
+        label: 'Created At',
+        type: 'datetimepicker'
+    }
+]

@@ -141,7 +141,6 @@ const QuickEmail = () => {
 
                 </FormField>
 
-
                 <Popover>
                     <PopoverTrigger asChild>
                         <Button variant="outline">Select Email template</Button>

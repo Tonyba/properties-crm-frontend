@@ -10,6 +10,8 @@ import { useEffect } from "react";
 import { CiCircleList } from "react-icons/ci";
 import { BsKanban } from "react-icons/bs";
 import { iconSize } from "@/helpers/constants";
+import { useQueryClient } from "@tanstack/react-query";
+import { useOffcanvas, useOffcanvasMutation } from "@/hooks/useOffcanvas";
 
 
 
@@ -20,6 +22,24 @@ export const ModuleHeader = () => {
     ] = useModuleHeader();
 
     const [searchParams, setSearchParams] = useSearchParams();
+
+    const queryClient = useQueryClient();
+
+    const { data: offcanvasOpts } = useOffcanvas({ queryClient });
+    const { mutate: mutateOffcanvas } = useOffcanvasMutation({ queryClient });
+
+    const openImport = () => {
+        console.log('hey')
+        mutateOffcanvas({
+            queryClient,
+            offCanvasOpts: {
+                ...offcanvasOpts,
+                title: 'Import ' + moduleSingle,
+                template: 'import',
+                size: 'full'
+            }
+        });
+    }
 
     useEffect(() => {
         if (showViewSwitcher) {
@@ -66,7 +86,7 @@ export const ModuleHeader = () => {
                     </Link>
                 }
 
-                {importBtn && <FilterButton>
+                {importBtn && <FilterButton onClick={openImport}>
                     <GrDownload size={14} />
                     Import
                 </FilterButton>}
